@@ -6,7 +6,7 @@
   <meta name="description" content="Discover Lake Sebu: Seven Falls zipline, lotus sunrise at Lake Seloton, T'boli culture, floating restaurants, and eco‑adventures in South Cotabato, Philippines." />
   <meta name="theme-color" content="#0d6efd" />
   <title>Lake Sebu Tourism</title>
-   <link rel="icon" href="assets/img/logo/logo3.png" />
+   <link rel="icon" href="assets/img/logo/logo.png" />
 
   <!-- Bootstrap 5 -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
@@ -55,7 +55,7 @@
   <nav id="navPrimary" class="navbar navbar-expand-lg navbar-light navbar-glass sticky-top py-2">
     <div class="container">
 <a class="navbar-brand d-flex align-items-center" href="#home">
-  <img src="assets/img/logo/logo3.png" alt="Lake Sebu Tourism" width="36" height="36" class="me-2">
+  <img src="assets/img/logo/logo.png" alt="Lake Sebu Tourism" width="36" height="36" class="me-2">
   <div>
     <strong>Lake Sebu</strong><br>
     <small class="text-muted">South Cotabato • PH</small>
