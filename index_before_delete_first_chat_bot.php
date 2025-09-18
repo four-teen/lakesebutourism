@@ -897,6 +897,38 @@
     </footer>
 
 
+<div class="modal fade" id="imageModal" tabindex="-1" aria-labelledby="imageModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-xl">
+        <div class="modal-content">
+            <div class="modal-body p-0">
+                <div class="row g-0">
+                    <div class="col-md-8">
+                        <div class="position-relative">
+                            <img id="mainModalImage" src="" class="img-fluid w-100" style="object-fit: cover; height: 500px;" alt="">
+                            <button type="button" class="btn-close position-absolute top-0 end-0 m-3" data-bs-dismiss="modal" aria-label="Close" style="z-index: 10;"></button>
+                        </div>
+                        <div id="modalThumbnails" class="d-flex p-2 bg-light justify-content-center flex-wrap gap-2">
+                            </div>
+                    </div>
+
+                    <div class="col-md-4">
+                        <div class="d-flex flex-column h-100 p-4">
+                            <div>
+                                <h5 id="modalTitle" class="modal-title section-title h4 mb-2"></h5>
+                                <p id="modalDescription" class="mb-0"></p>
+                            </div>
+                            <div class="mt-auto pt-3">
+                                <a href="#plan" class="btn btn-primary w-100" data-bs-dismiss="modal">
+                                    <i class="bx bx-calendar-star me-1"></i> Plan This Activity
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
     <a href="#" id="backToTop" class="btn btn-primary rounded-circle shadow-lg" style="width:50px; height:50px; padding:10px; display:grid; place-items:center;">
         <i class="bx bx-arrow-to-top fs-4"></i>
@@ -1057,18 +1089,40 @@ if (imageModal) {
 
     </script>
 
-<button id="chatbotBtn" class="btn rounded-circle shadow-lg"
-  style="position:fixed; right:16px; bottom:80px; width:56px; height:56px; z-index:1200; display:grid; place-items:center; background-color: #f8f9fa; border: 2px solid #ff9900;">
-  <img src="assets/mp_img/cbot.gif" alt="Animated chatbot icon" style="max-width: 100%; max-height: 100%;">
+<!-- Floating Chat Button -->
+<button id="lsChatBtn"
+  class="btn btn-primary rounded-circle shadow-lg"
+  style="position:fixed; right:16px; bottom:80px; width:56px; height:56px; z-index:1200; display:grid; place-items:center;">
+  <i class="bx bx-message-dots fs-4"></i>
 </button>
+
+<!-- Chat Window -->
+<div id="lsChat" class="card shadow-lg"
+     style="position:fixed; right:16px; bottom:148px; width:340px; max-height:70vh; z-index:1200; display:none;">
+  <div class="card-header d-flex align-items-center justify-content-between bg-primary text-white py-2">
+    <div class="d-flex align-items-center gap-2">
+      <span class="badge bg-light text-primary">Lake Sebu</span>
+      <strong>Tourism Chat</strong>
+    </div>
+    <button id="lsChatClose" class="btn btn-sm btn-light" type="button"><i class="bx bx-x"></i></button>
+  </div>
+  <div id="lsChatBody" class="card-body p-3" style="overflow:auto; max-height:50vh; background:#f8fafc;"></div>
+  <div class="card-footer p-2">
+    <form id="lsChatForm" class="d-flex align-items-center gap-2">
+      <input id="lsChatInput" type="text" class="form-control" placeholder="Type your message…" autocomplete="off" />
+      <button class="btn btn-primary" type="submit"><i class="bx bx-send"></i></button>
+    </form>
+    <div class="form-text mt-1">Ask: Directions, best time, zipline price, where to eat</div>
+  </div>
+</div>
 
 <div class="modal fade" id="chatbotModal" tabindex="-1" aria-labelledby="chatbotModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered modal-sm">
     <div class="modal-content shadow rounded-4">
       <div class="modal-header border-0 pb-0">
         <h5 class="modal-title" id="chatbotModalLabel">
-          <img src="assets/img/ls_logo.png" alt="Lake Sebu AI" width="28" height="28" class="me-2">
-          Lake Sebu AI
+          <img src="assets/img/ls_logo.png" alt="Lakbay AI" width="28" height="28" class="me-2">
+          Lakbay AI
         </h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
@@ -1093,7 +1147,7 @@ if (imageModal) {
   </div>
 </div>
 
-
+<button id="chatbotBtn" class="btn btn-primary btn-lg rounded-circle shadow-lg" style="position:fixed; bottom:20px; right:20px; z-index:1000;"><i class="bx bx-chat fs-4"></i></button>
 
 <script>
   const inquireButtons = document.querySelectorAll('.inquire-tour');
@@ -1125,21 +1179,9 @@ if (imageModal) {
   import { GoogleGenerativeAI } from "https://esm.run/@google/generative-ai@0.21.0";
 
   // ⛔ Replace with your real key from Google AI Studio
-  const API_KEY = "AIzaSyAeIziktUm1zMTFk9f9qd1S_joATyahgQM";
+  const API_KEY = "REPLACE_ME";
   const genAI = new GoogleGenerativeAI(API_KEY);
-  // const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
-    const model = genAI.getGenerativeModel({
-        model: "gemini-1.5-flash",
-        systemInstruction: `
-    You are Lake Sebu AI, a domain-limited assistant for Lake Sebu tourism (South Cotabato, Philippines).
-    Only answer questions that are directly about Lake Sebu: directions, transport, zipline, waterfalls,
-    lotus sunrise (Lake Seloton), T'boli culture, stays/eats, safety, budgets, and itineraries.
-    If the question is not about Lake Sebu, politely refuse and steer back to Lake Sebu topics.
-    If prices/schedules vary, say they are indicative. Use a friendly Filipino-English mix when user does.
-    If you don't know the answer tell that ask Dr. Elbren for more information.
-
-    `
-      });
+  const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
   const chat = model.startChat({
     history: [],
     generationConfig: { temperature: 0.9 },
@@ -1173,7 +1215,7 @@ if (imageModal) {
 
     const typing = document.createElement('div');
     typing.className = 'ls-typing ms-2';
-    typing.textContent = 'Lake Sebu AI is helping...';
+    typing.textContent = 'Lakbay AI is typing...';
     chatbox.appendChild(typing);
     chatbox.scrollTop = chatbox.scrollHeight;
 
@@ -1198,6 +1240,121 @@ if (imageModal) {
 </script>
 
 
+
+
+<script>
+// OFFLINE mode muna; gawin true kapag may /api/chat_proxy.php ka na
+const LS_USE_AI = false;
+
+$(function () {
+  const $btn = $('#lsChatBtn');
+  const $chat = $('#lsChat');
+  const $close = $('#lsChatClose');
+  const $body = $('#lsChatBody');
+  const $form = $('#lsChatForm');
+  const $input = $('#lsChatInput');
+
+  if (!$btn.length) { console.warn('Chat button not found'); return; }
+
+  const STORAGE_KEY = 'ls_chat_history_v1';
+  let history = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+  const saveHistory = () => localStorage.setItem(STORAGE_KEY, JSON.stringify(history));
+  const scrollToBottom = () => $body.stop().animate({ scrollTop: $body[0].scrollHeight }, 300);
+
+  function bubble(role, text, isHtml=false) {
+    const safe = isHtml ? text : $('<div>').text(text).html();
+    $body.append(`<div class="ls-msg ${role}"><div class="bubble">${safe}</div></div>`);
+    scrollToBottom();
+  }
+
+  function typing(on=true) {
+    if (on) { $body.append('<div id="lsTyping" class="ls-typing">Bot is typing…</div>'); scrollToBottom(); }
+    else { $('#lsTyping').remove(); }
+  }
+
+  function initWelcome() {
+    if (!history.length) {
+      bubble('bot', "Mabuhay! 👋 I can help with directions, best time to visit, zipline price, lotus sunrise, or where to eat.");
+      history.push({role:'bot', content:'Welcome message'}); saveHistory();
+    } else {
+      history.forEach(m => bubble(m.role, m.content));
+    }
+  }
+
+  function faqBrain(q) {
+    const t = q.toLowerCase();
+    if (/(how.*get|directions|route|transport|paano pumunta|ito punta)/.test(t))
+      return "✈️ Fly to General Santos (GES) → bus to Surallah → van/habal-habal to Lake Sebu (~3–4 hrs).";
+    if (/(best time|when to visit|season|ulan|tag-init)/.test(t))
+      return "🌤️ Best time: Dec–Apr (drier months) for sunrise cruises and trekking.";
+    if (/(zip|zipline|seven falls).*(price|rate|magkano)/.test(t))
+      return "🎢 Seven Falls Zipline: indicative ₱350–₱550 per rider (confirm on-site).";
+    if (/(lotus|sunrise|seloton).*(boat|cruise|price|rate)/.test(t))
+      return "🌅 Lotus Sunrise Cruise: ~₱600–₱1,200 per boat; go 5:30–6:00 AM.";
+    if (/(eat|restaurant|food|kainan|tilapia|where to eat)/.test(t))
+      return "🍽️ Floating restaurants: tilapia specialties (crispy/sinugba) with lake views.";
+    if (/(t.?boli|culture|weav|t'nalak|tnalak|dreamweaver)/.test(t))
+      return "🧶 Visit Lang Dulay Weaving Center; support fair-trade crafts.";
+    if (/(safe|safety|ligtas|security)/.test(t))
+      return "🛡️ Generally safe. Book accredited guides; PH emergency: 911.";
+    if (/(stay|hotel|resort|homestay|saan matulog)/.test(t))
+      return "🏨 Lakeside resorts, eco-lodges, and homestays available (see Google for current options).";
+    if (/(contact|tourism office|number|hotline)/.test(t))
+      return "📞 Tourism Office: sample +63 (000) 123 4567. Check official LGU/Tourism FB for current numbers.";
+    return null;
+  }
+
+  async function askBot(text) {
+    const faq = faqBrain(text);
+    if (faq && !LS_USE_AI) return faq;
+
+    if (LS_USE_AI) {
+      try {
+        const res = await fetch('/api/chat_proxy.php', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ message: text, history: history.slice(-10) })
+        });
+        const data = await res.json();
+        return data.reply || "Sorry, no reply right now.";
+      } catch (e) {
+        console.error(e);
+        return faq || "Sorry, I’m having trouble. Try asking about directions, best time, zipline price, or where to eat.";
+      }
+    }
+
+    return "I didn’t catch that yet 🤖. Try: directions, best time, zipline price, lotus sunrise, where to eat, culture, or safety.";
+  }
+
+  // Open/close
+  $btn.on('click', () => { $chat.toggle(); if ($chat.is(':visible')) initWelcome(); });
+  $close.on('click', () => $chat.hide());
+
+  // Send
+  $form.on('submit', async (e) => {
+    e.preventDefault();
+    const text = $input.val().trim();
+    if (!text) return;
+    bubble('user', text);
+    history.push({role:'user', content:text}); saveHistory();
+    $input.val('');
+    typing(true);
+    const reply = await askBot(text);
+    typing(false);
+    bubble('bot', reply);
+    history.push({role:'bot', content:reply}); saveHistory();
+  });
+
+  // Auto-open on Inquire buttons
+  $('.inquire-tour').on('click', function() {
+    const q = `I want to inquire about "${$(this).data('tour')}". What should I know?`;
+    $chat.show(); initWelcome(); bubble('user', q);
+    history.push({role:'user', content:q}); saveHistory();
+    typing(true);
+    askBot(q).then(r => { typing(false); bubble('bot', r); history.push({role:'bot', content:r}); saveHistory(); });
+  });
+});
+</script>
 
 
 
