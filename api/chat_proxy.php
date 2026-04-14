@@ -1,226 +1,109 @@
 <?php
+// File: /api/chat_proxy.php
+// Windows-friendly OpenRouter proxy with multiple key sources.
+// Priority: ENV > C:\secrets\openrouter.ini > fallback message
 
 header('Content-Type: application/json');
 
-function loadEnvFile(string $path): array
-{
-    if (!is_file($path)) {
-        return [];
-    }
-
-    $lines = file($path, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
-    if ($lines === false) {
-        return [];
-    }
-
-    $values = [];
-    foreach ($lines as $line) {
-        $trimmed = trim($line);
-        if ($trimmed === '' || substr($trimmed, 0, 1) === '#') {
-            continue;
-        }
-
-        $parts = explode('=', $line, 2);
-        if (count($parts) !== 2) {
-            continue;
-        }
-
-        $key = trim($parts[0]);
-        $value = trim($parts[1]);
-        if ($key === '') {
-            continue;
-        }
-
-        $length = strlen($value);
-        if ($length >= 2) {
-            $first = $value[0];
-            $last = $value[$length - 1];
-            if (($first === '"' && $last === '"') || ($first === "'" && $last === "'")) {
-                $value = substr($value, 1, -1);
-            }
-        }
-
-        $values[$key] = $value;
-    }
-
-    return $values;
-}
-
-function envValue(array $env, string $key, ?string $fallback = null): ?string
-{
-    if (array_key_exists($key, $env) && $env[$key] !== '') {
-        return $env[$key];
-    }
-
-    $runtime = getenv($key);
-    if ($runtime !== false && $runtime !== '') {
-        return $runtime;
-    }
-
-    return $fallback;
-}
-
-function jsonResponse(int $status, array $payload): void
-{
-    http_response_code($status);
-    echo json_encode($payload, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
-    exit;
-}
-
-function redactSecrets(string $value): string
-{
-    $value = preg_replace('/AIza[0-9A-Za-z\-_]{10,}/', '[hidden-api-key]', $value) ?? $value;
-    $value = preg_replace('/api_key:[^\s\'"]+/i', 'api_key:[hidden]', $value) ?? $value;
-
-    return trim($value);
-}
-
-function containsAny(string $haystack, array $needles): bool
-{
-    foreach ($needles as $needle) {
-        if ($needle !== '' && stripos($haystack, $needle) !== false) {
-            return true;
-        }
-    }
-
-    return false;
-}
-
-function geminiErrorPayload(int $status, string $providerMessage): array
-{
-    $safeDetail = redactSecrets($providerMessage);
-    $normalized = strtolower($safeDetail);
-    $reply = "The Lake Sebu Assistant is temporarily unavailable right now. Please try again later.";
-
-    if (
-        containsAny($normalized, ['permission denied', 'api key', 'consumer', 'suspended', 'forbidden', 'unauthorized']) ||
-        $status === 401 ||
-        $status === 403
-    ) {
-        $reply = 'The Lake Sebu Assistant is temporarily unavailable because the Gemini API key on the server needs to be updated.';
-    } elseif (
-        containsAny($normalized, ['quota', 'rate limit', 'resource exhausted', 'too many requests']) ||
-        $status === 429
-    ) {
-        $reply = 'The Lake Sebu Assistant is busy right now because the Gemini usage limit has been reached. Please try again in a few minutes.';
-    } elseif ($status >= 500) {
-        $reply = 'The Lake Sebu Assistant is temporarily unavailable because the Gemini service did not respond normally.';
-    }
-
-    return [
-        'reply' => $reply,
-        'detail' => $safeDetail,
-        'providerStatus' => $status,
-    ];
-}
-
-function historyToGeminiContents(array $history, string $userMessage): array
-{
-    $contents = [];
-
-    foreach ($history as $message) {
-        if (!isset($message['role'], $message['content'])) {
-            continue;
-        }
-
-        $role = $message['role'] === 'user' ? 'user' : 'model';
-        $content = trim((string) $message['content']);
-        if ($content === '') {
-            continue;
-        }
-
-        $contents[] = [
-            'role' => $role,
-            'parts' => [
-                ['text' => mb_substr($content, 0, 2000)],
-            ],
-        ];
-    }
-
-    $contents[] = [
-        'role' => 'user',
-        'parts' => [
-            ['text' => $userMessage],
-        ],
-    ];
-
-    return $contents;
-}
-
+// ---- Input ----
 $raw = file_get_contents('php://input');
 $payload = json_decode($raw, true) ?: [];
-$userMessage = trim((string) ($payload['message'] ?? ''));
-$history = is_array($payload['history'] ?? null) ? $payload['history'] : [];
-$env = loadEnvFile(dirname(__DIR__) . DIRECTORY_SEPARATOR . '.env');
+$userMessage = trim($payload['message'] ?? '');
+$history = $payload['history'] ?? [];
+$modelFromClient = $payload['model'] ?? null;
 
 if ($userMessage === '') {
-    jsonResponse(400, ['error' => 'Missing message']);
+  http_response_code(400);
+  echo json_encode(['error' => 'Missing message']);
+  exit;
 }
 
-$apiKey = envValue($env, 'GEMINI_API_KEY');
-$model = trim((string) ($payload['model'] ?? envValue($env, 'GEMINI_MODEL', 'gemini-1.5-flash')));
+// ---- Get API key (Windows-safe) ----
+$apiKey = getenv('OPENROUTER_API_KEY');
+$siteUrl = getenv('SITE_URL');
 
-if ($apiKey === null || $apiKey === '') {
-    jsonResponse(500, [
-        'reply' => 'The Lake Sebu Assistant is not configured yet. Add a valid GEMINI_API_KEY to .env.',
-        'detail' => 'Missing GEMINI_API_KEY',
-    ]);
+// If not in ENV, check C:\secrets\openrouter.ini (or change path if you want)
+if (!$apiKey) {
+  $iniPath = 'C:\\secrets\\openrouter.ini';
+  if (file_exists($iniPath)) {
+    $ini = parse_ini_file($iniPath, false, INI_SCANNER_RAW);
+    if (!empty($ini['OPENROUTER_API_KEY'])) $apiKey = trim($ini['OPENROUTER_API_KEY'], "\"'");
+    if (!empty($ini['SITE_URL'])) $siteUrl = trim($ini['SITE_URL'], "\"'");
+  }
 }
 
+if (!$apiKey) {
+  echo json_encode(['reply' => "AI mode not configured yet. Set OPENROUTER_API_KEY in system env or C:\\secrets\\openrouter.ini"]);
+  exit;
+}
+if (!$siteUrl) {
+  $siteUrl = 'http://localhost';
+}
+
+// ---- Build messages ----
+$messages = [
+  [
+    'role' => 'system',
+    'content' => "You are a friendly Lake Sebu tourism assistant. Keep answers concise, factual, and helpful. If rates are indicative, say so. Use bullets when useful."
+  ]
+];
+
+foreach ($history as $m) {
+  if (!isset($m['role'], $m['content'])) continue;
+  $role = ($m['role'] === 'user') ? 'user' : 'assistant';
+  $messages[] = ['role' => $role, 'content' => mb_substr($m['content'], 0, 2000)];
+}
+$messages[] = ['role' => 'user', 'content' => $userMessage];
+
+// ---- Model choice ----
+// You can pin a free label if available, but availability changes.
+// Safe default:
+$model = $modelFromClient ?: 'openrouter/auto';
+
+// ---- Request body ----
 $body = [
-    'system_instruction' => [
-        'parts' => [
-            [
-                'text' => "You are Lake Sebu AI, a friendly tourism assistant for Lake Sebu, South Cotabato, Philippines. Only answer questions directly related to Lake Sebu travel, directions, transport, attractions, culture, stays, food, safety, budgets, and itineraries. Keep answers concise, factual, and helpful. If rates or schedules vary, say they are indicative.",
-            ],
-        ],
-    ],
-    'contents' => historyToGeminiContents($history, $userMessage),
-    'generationConfig' => [
-        'temperature' => 0.9,
-        'maxOutputTokens' => 350,
-    ],
+  'model' => $model,
+  'messages' => $messages,
+  'temperature' => 0.3,
+  'max_tokens' => 350,
 ];
 
-$url = 'https://generativelanguage.googleapis.com/v1beta/models/' . rawurlencode($model) . ':generateContent';
+// ---- Headers ----
 $headers = [
-    'Content-Type: application/json',
-    'x-goog-api-key: ' . $apiKey,
+  'Content-Type: application/json',
+  'Authorization: Bearer ' . $apiKey,
+  'Referer: ' . $siteUrl,
+  'X-Title: Lake Sebu Tourism Chat',
 ];
 
-$ch = curl_init($url);
+// ---- cURL ----
+$ch = curl_init('https://openrouter.ai/api/v1/chat/completions');
 curl_setopt_array($ch, [
-    CURLOPT_RETURNTRANSFER => true,
-    CURLOPT_HTTPHEADER => $headers,
-    CURLOPT_POST => true,
-    CURLOPT_POSTFIELDS => json_encode($body),
-    CURLOPT_TIMEOUT => 30,
+  CURLOPT_RETURNTRANSFER => true,
+  CURLOPT_HTTPHEADER => $headers,
+  CURLOPT_POST => true,
+  CURLOPT_POSTFIELDS => json_encode($body),
+  CURLOPT_TIMEOUT => 30,
 ]);
 
-$response = curl_exec($ch);
-$error = curl_error($ch);
-$httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+$res = curl_exec($ch);
+$err = curl_error($ch);
+$http = curl_getinfo($ch, CURLINFO_HTTP_CODE);
 curl_close($ch);
 
-if ($error) {
-    jsonResponse(502, [
-        'reply' => "The Lake Sebu Assistant is temporarily unavailable because it couldn't reach Gemini.",
-        'detail' => redactSecrets($error),
-    ]);
+if ($err) {
+  echo json_encode(['reply' => "Sorry, I couldn’t connect to the AI service."]);
+  exit;
 }
 
-$data = json_decode((string) $response, true);
-if ($httpCode < 200 || $httpCode >= 300) {
-    $message = (string) ($data['error']['message'] ?? "API error (HTTP $httpCode)");
-    jsonResponse(502, geminiErrorPayload($httpCode, $message));
+$data = json_decode($res, true);
+
+// Handle non-2xx
+if ($http < 200 || $http >= 300) {
+  $msg = $data['error']['message'] ?? "API error (HTTP $http)";
+  echo json_encode(['reply' => "I’m hitting a limit/error right now: $msg"]);
+  exit;
 }
 
-$parts = $data['candidates'][0]['content']['parts'] ?? [];
-$reply = '';
-foreach ($parts as $part) {
-    if (!empty($part['text'])) {
-        $reply .= $part['text'];
-    }
-}
-
-jsonResponse(200, ['reply' => $reply !== '' ? $reply : 'Sorry, no reply right now.']);
+$reply = $data['choices'][0]['message']['content'] ?? null;
+echo json_encode(['reply' => $reply ?: "Sorry, no reply right now."]);
