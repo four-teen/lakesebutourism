@@ -1,0 +1,746 @@
+<?php
+$establishments = require __DIR__ . '/data/establishments.php';
+$slug = isset($_GET['slug']) ? trim($_GET['slug']) : '';
+$establishment = null;
+
+foreach ($establishments as $item) {
+    if ($item['slug'] === $slug) {
+        $establishment = $item;
+        break;
+    }
+}
+
+if (!$establishment) {
+    header('HTTP/1.0 404 Not Found');
+}
+
+function h($value)
+{
+    return htmlspecialchars((string) $value, ENT_QUOTES, 'UTF-8');
+}
+
+$pageTitle = $establishment ? $establishment['name'] . ' | Lake Sebu Tourism' : 'Establishment Not Found | Lake Sebu Tourism';
+$pageDescription = $establishment ? $establishment['summary'] : 'The requested Lake Sebu tourism establishment could not be found.';
+$mapUrl = $establishment ? 'https://www.google.com/maps/search/?api=1&query=' . rawurlencode($establishment['map_query']) : 'https://www.google.com/maps/place/Lake+Sebu';
+$related = array();
+$gallery = $establishment && !empty($establishment['gallery']) ? $establishment['gallery'] : array();
+$galleryCount = count($gallery);
+$galleryDescription = $establishment && !empty($establishment['gallery_description'])
+    ? $establishment['gallery_description']
+    : '';
+$galleryData = $gallery
+    ? json_encode(
+        $gallery,
+        JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT | JSON_UNESCAPED_SLASHES
+    )
+    : '[]';
+
+if ($establishment) {
+    foreach ($establishments as $item) {
+        if ($item['slug'] !== $establishment['slug'] && $item['category'] === $establishment['category']) {
+            $related[] = $item;
+        }
+
+        if (count($related) >= 3) {
+            break;
+        }
+    }
+}
+?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="<?php echo h($pageDescription); ?>" />
+    <meta name="theme-color" content="#0f3d3e" />
+    <title><?php echo h($pageTitle); ?></title>
+    <link rel="icon" href="assets/img/logo/logo.png" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet" />
+    <style>
+        :root{
+            --bg-grad: linear-gradient(180deg, #eef6f2 0%, #f6fbfc 34%, #ffffff 62%);
+            --brand-deep: #0f3d3e;
+            --brand-moss: #2f6d57;
+            --brand-sand: #d8b16c;
+            --brand-ink: #24303f;
+        }
+        body{
+            min-height:100vh;
+            font-family:"Manrope", system-ui, -apple-system, "Segoe UI", sans-serif;
+            background:var(--bg-grad);
+            color:var(--brand-ink);
+        }
+        .navbar-glass{
+            background:rgba(248,250,248,.88);
+            backdrop-filter:blur(18px);
+            border-bottom:1px solid rgba(255,255,255,.45);
+            box-shadow:0 16px 32px rgba(15,61,62,.08);
+        }
+        .navbar-brand{
+            gap:.85rem;
+            text-decoration:none;
+        }
+        .navbar-brand img{
+            width:44px;
+            height:44px;
+        }
+        .brand-title{
+            display:block;
+            font-weight:800;
+            line-height:1.05;
+            color:var(--brand-deep);
+        }
+        .brand-subtitle{
+            display:block;
+            color:#59706a;
+            font-size:.9rem;
+            line-height:1.2;
+        }
+        .btn-pill{
+            border-radius:999px;
+            font-weight:800;
+            padding:.8rem 1.05rem;
+        }
+        .detail-hero{
+            position:relative;
+            min-height:62vh;
+            display:flex;
+            align-items:end;
+            color:#fff;
+            overflow:hidden;
+            background:var(--detail-bg) center/cover no-repeat;
+        }
+        .detail-hero::before{
+            content:"";
+            position:absolute;
+            inset:0;
+            background:
+                linear-gradient(90deg, rgba(7,22,23,.84), rgba(10,32,38,.58) 46%, rgba(14,52,60,.22)),
+                linear-gradient(180deg, rgba(0,0,0,.08), rgba(0,0,0,.38));
+        }
+        .detail-hero-inner{
+            position:relative;
+            z-index:1;
+            width:100%;
+            padding:clamp(4rem, 9vw, 7rem) 0 4rem;
+        }
+        .detail-kicker{
+            display:inline-flex;
+            align-items:center;
+            gap:.5rem;
+            padding:.65rem .95rem;
+            border-radius:999px;
+            background:rgba(255,255,255,.14);
+            border:1px solid rgba(255,255,255,.18);
+            backdrop-filter:blur(12px);
+            font-weight:800;
+        }
+        .detail-title{
+            max-width:58rem;
+            margin:1rem 0;
+            font-family:"Cormorant Garamond", Georgia, serif;
+            font-size:clamp(3.2rem, 7vw, 6rem);
+            line-height:.95;
+            font-weight:700;
+            text-shadow:0 18px 40px rgba(0,0,0,.24);
+        }
+        .detail-lead{
+            max-width:45rem;
+            color:rgba(255,255,255,.88);
+            font-size:1.08rem;
+            line-height:1.75;
+        }
+        .hero-actions{
+            display:flex;
+            flex-wrap:wrap;
+            gap:.85rem;
+            margin-top:1.4rem;
+        }
+        .btn-hero-primary{
+            border:0;
+            border-radius:999px;
+            background:linear-gradient(135deg, #e1bf7b, #c08a34);
+            color:#132425;
+            font-weight:800;
+            padding:.9rem 1.15rem;
+        }
+        .btn-hero-primary:hover{
+            color:#132425;
+            transform:translateY(-1px);
+        }
+        .btn-hero-secondary{
+            border-radius:999px;
+            border:1px solid rgba(255,255,255,.28);
+            background:rgba(255,255,255,.10);
+            color:#fff;
+            font-weight:800;
+            padding:.9rem 1.15rem;
+        }
+        .btn-hero-secondary:hover{
+            color:#fff;
+            background:rgba(255,255,255,.18);
+        }
+        .detail-panel,
+        .detail-side,
+        .related-card,
+        .not-found-panel{
+            border:1px solid rgba(15,61,62,.08);
+            border-radius:1.55rem;
+            background:#fff;
+            box-shadow:0 20px 40px rgba(11,38,45,.09);
+        }
+        .detail-panel,
+        .detail-side,
+        .not-found-panel{
+            padding:1.35rem;
+        }
+        .section-title{
+            color:#173434;
+            font-weight:800;
+        }
+        .detail-copy{
+            color:#566661;
+            line-height:1.8;
+        }
+        .highlight-list{
+            display:flex;
+            flex-wrap:wrap;
+            gap:.65rem;
+            padding:0;
+            margin:1.1rem 0 0;
+            list-style:none;
+        }
+        .highlight-list li{
+            display:inline-flex;
+            align-items:center;
+            gap:.35rem;
+            border-radius:999px;
+            padding:.62rem .82rem;
+            background:#eff6f3;
+            color:#244d4a;
+            font-weight:800;
+            font-size:.9rem;
+        }
+        .contact-list{
+            display:grid;
+            gap:1rem;
+            margin:0;
+        }
+        .contact-item{
+            display:grid;
+            gap:.2rem;
+        }
+        .contact-item dt{
+            color:#6b7a76;
+            font-size:.78rem;
+            font-weight:800;
+            letter-spacing:.06em;
+            text-transform:uppercase;
+        }
+        .contact-item dd{
+            margin:0;
+            color:#173434;
+            font-weight:800;
+        }
+        .contact-item a{
+            color:#173434;
+            text-decoration:none;
+        }
+        .contact-item a:hover{
+            color:var(--brand-moss);
+        }
+        .side-actions{
+            display:grid;
+            gap:.75rem;
+            margin-top:1.25rem;
+        }
+        .hero-meta{
+            display:flex;
+            flex-wrap:wrap;
+            gap:.75rem;
+            margin-top:1.2rem;
+        }
+        .hero-stat{
+            display:inline-flex;
+            align-items:center;
+            gap:.45rem;
+            padding:.7rem .95rem;
+            border-radius:999px;
+            background:rgba(255,255,255,.14);
+            border:1px solid rgba(255,255,255,.16);
+            backdrop-filter:blur(12px);
+            color:#fff;
+            font-weight:800;
+        }
+        .gallery-summary{
+            max-width:46rem;
+            color:#5f706b;
+            line-height:1.75;
+        }
+        .gallery-count{
+            display:inline-flex;
+            align-items:center;
+            gap:.45rem;
+            padding:.75rem 1rem;
+            border-radius:999px;
+            background:#eff6f3;
+            color:#204241;
+            font-weight:800;
+        }
+        .gallery-featured,
+        .gallery-card{
+            display:flex;
+            flex-direction:column;
+            width:100%;
+            padding:0;
+            border:1px solid rgba(15,61,62,.08);
+            border-radius:1.55rem;
+            overflow:hidden;
+            background:#fff;
+            box-shadow:0 20px 40px rgba(11,38,45,.09);
+            text-align:left;
+            cursor:pointer;
+            transition:transform .22s ease, box-shadow .22s ease;
+        }
+        .gallery-featured:hover,
+        .gallery-featured:focus-visible,
+        .gallery-card:hover,
+        .gallery-card:focus-visible{
+            transform:translateY(-4px);
+            box-shadow:0 24px 48px rgba(11,38,45,.14);
+        }
+        .gallery-featured:focus-visible,
+        .gallery-card:focus-visible{
+            outline:3px solid rgba(216,177,108,.65);
+            outline-offset:3px;
+        }
+        .gallery-image-wrap{
+            position:relative;
+        }
+        .gallery-featured img{
+            width:100%;
+            aspect-ratio:16/9;
+            object-fit:cover;
+        }
+        .gallery-card img{
+            width:100%;
+            aspect-ratio:4/3;
+            object-fit:cover;
+        }
+        .gallery-label{
+            position:absolute;
+            top:1rem;
+            left:1rem;
+            display:inline-flex;
+            align-items:center;
+            gap:.35rem;
+            padding:.55rem .8rem;
+            border-radius:999px;
+            background:rgba(8,29,30,.72);
+            color:#fff;
+            font-size:.82rem;
+            font-weight:800;
+            letter-spacing:.02em;
+        }
+        .gallery-body{
+            padding:1.1rem 1.15rem 1.2rem;
+        }
+        .gallery-title{
+            color:#173434;
+            font-size:1rem;
+            font-weight:800;
+        }
+        .gallery-caption{
+            margin:0;
+            color:#5f706b;
+            line-height:1.7;
+        }
+        .gallery-modal-dialog{
+            max-width:min(1100px, calc(100vw - 2rem));
+        }
+        .gallery-modal-content{
+            border:0;
+            border-radius:1.7rem;
+            box-shadow:0 28px 70px rgba(7,24,29,.22);
+        }
+        .gallery-modal-image{
+            width:100%;
+            max-height:min(68vh, 44rem);
+            object-fit:cover;
+            border-radius:1.4rem;
+            background:#edf3ef;
+        }
+        .gallery-modal-caption{
+            color:#566661;
+            line-height:1.75;
+        }
+        .gallery-thumb-strip{
+            display:grid;
+            grid-template-columns:repeat(auto-fill, minmax(92px, 1fr));
+            gap:.8rem;
+        }
+        .gallery-thumb{
+            padding:0;
+            border:2px solid transparent;
+            border-radius:1rem;
+            overflow:hidden;
+            background:#fff;
+            transition:border-color .2s ease, transform .2s ease, box-shadow .2s ease;
+        }
+        .gallery-thumb:hover,
+        .gallery-thumb:focus-visible{
+            transform:translateY(-2px);
+            border-color:rgba(15,61,62,.35);
+            box-shadow:0 12px 24px rgba(11,38,45,.12);
+        }
+        .gallery-thumb.is-active{
+            border-color:rgba(216,177,108,.95);
+            box-shadow:0 14px 28px rgba(192,138,52,.16);
+        }
+        .gallery-thumb img{
+            width:100%;
+            aspect-ratio:4/3;
+            object-fit:cover;
+        }
+        .related-card{
+            display:flex;
+            height:100%;
+            overflow:hidden;
+            color:inherit;
+            text-decoration:none;
+            transition:transform .22s ease, box-shadow .22s ease;
+        }
+        .related-card:hover,
+        .related-card:focus-visible{
+            color:inherit;
+            transform:translateY(-4px);
+            box-shadow:0 24px 48px rgba(11,38,45,.14);
+        }
+        .related-card:focus-visible{
+            outline:3px solid rgba(216,177,108,.65);
+            outline-offset:3px;
+        }
+        .related-card img{
+            width:7.5rem;
+            min-height:9rem;
+            object-fit:cover;
+        }
+        .related-body{
+            padding:1rem;
+        }
+        .related-body h3{
+            font-size:1rem;
+            color:#173434;
+            font-weight:800;
+        }
+        .related-body p{
+            color:#62736f;
+            line-height:1.55;
+        }
+        .footer-shell{
+            margin-top:3rem;
+            padding:1.4rem;
+            border-radius:1.55rem 1.55rem 0 0;
+            background:#0f3d3e;
+            color:rgba(255,255,255,.78);
+        }
+        .footer-shell a{
+            color:#fff;
+            font-weight:800;
+        }
+        @media (max-width: 767.98px){
+            .detail-hero{
+                min-height:68vh;
+            }
+            .detail-panel,
+            .detail-side,
+            .not-found-panel{
+                padding:1.1rem;
+                border-radius:1.35rem;
+            }
+            .gallery-featured,
+            .gallery-card{
+                border-radius:1.35rem;
+            }
+            .related-card{
+                flex-direction:column;
+            }
+            .related-card img{
+                width:100%;
+                height:12rem;
+                min-height:0;
+            }
+            .gallery-featured img{
+                aspect-ratio:4/3;
+            }
+            .gallery-modal-dialog{
+                max-width:calc(100vw - 1rem);
+                margin:.5rem auto;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand navbar-light navbar-glass sticky-top py-2">
+        <div class="container">
+            <a class="navbar-brand d-flex align-items-center" href="index.php#home">
+                <img src="assets/img/logo/logo.png" alt="Lake Sebu Tourism">
+                <div>
+                    <span class="brand-title">Lake Sebu</span>
+                    <small class="brand-subtitle">Tourism Establishments</small>
+                </div>
+            </a>
+            <a href="index.php#establishments" class="btn btn-outline-primary btn-pill ms-auto">
+                <i class="bx bx-left-arrow-alt me-1"></i>Back to List
+            </a>
+        </div>
+    </nav>
+
+    <?php if ($establishment): ?>
+        <header class="detail-hero" style="--detail-bg:url('<?php echo h($establishment['image']); ?>');">
+            <div class="detail-hero-inner">
+                <div class="container">
+                    <span class="detail-kicker"><i class="bx bx-building-house"></i><?php echo h($establishment['type']); ?></span>
+                    <h1 class="detail-title"><?php echo h($establishment['name']); ?></h1>
+                    <p class="detail-lead mb-0"><?php echo h($establishment['summary']); ?></p>
+                    <div class="hero-actions">
+                        <a class="btn btn-hero-primary" href="tel:<?php echo h($establishment['phone_tel']); ?>">
+                            <i class="bx bx-phone me-1"></i>Call <?php echo h($establishment['phone']); ?>
+                        </a>
+                        <a class="btn btn-hero-secondary" href="<?php echo h($mapUrl); ?>" target="_blank" rel="noopener noreferrer">
+                            <i class="bx bx-map me-1"></i>Open Map Search
+                        </a>
+                    </div>
+                    <div class="hero-meta">
+                        <span class="hero-stat">
+                            <i class="bx bx-camera"></i><?php echo h($galleryCount . ' photo' . ($galleryCount === 1 ? '' : 's')); ?>
+                        </span>
+                        <span class="hero-stat">
+                            <i class="bx bx-star"></i><?php echo h($establishment['ideal_for']); ?>
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <main class="container py-5">
+            <div class="row g-4">
+                <div class="col-lg-7">
+                    <article class="detail-panel h-100">
+                        <h2 class="section-title h3 mb-3">About This Establishment</h2>
+                        <p class="detail-copy mb-0"><?php echo h($establishment['description']); ?></p>
+                        <ul class="highlight-list">
+                            <?php foreach ($establishment['highlights'] as $highlight): ?>
+                                <li><i class="bx bx-check-circle"></i><?php echo h($highlight); ?></li>
+                            <?php endforeach; ?>
+                        </ul>
+                    </article>
+                </div>
+                <div class="col-lg-5">
+                    <aside class="detail-side h-100">
+                        <h2 class="section-title h4 mb-3">Contact Details</h2>
+                        <dl class="contact-list">
+                            <div class="contact-item">
+                                <dt>Cell No.</dt>
+                                <dd><a href="tel:<?php echo h($establishment['phone_tel']); ?>"><?php echo h($establishment['phone']); ?></a></dd>
+                            </div>
+                            <div class="contact-item">
+                                <dt>Best for</dt>
+                                <dd><?php echo h($establishment['ideal_for']); ?></dd>
+                            </div>
+                            <div class="contact-item">
+                                <dt>Listing Type</dt>
+                                <dd><?php echo h($establishment['type']); ?></dd>
+                            </div>
+                        </dl>
+                        <div class="side-actions">
+                            <a class="btn btn-primary btn-pill" href="tel:<?php echo h($establishment['phone_tel']); ?>">
+                                <i class="bx bx-phone-call me-1"></i>Call Establishment
+                            </a>
+                            <a class="btn btn-outline-primary btn-pill" href="<?php echo h($mapUrl); ?>" target="_blank" rel="noopener noreferrer">
+                                <i class="bx bx-map-pin me-1"></i>Search in Maps
+                            </a>
+                        </div>
+                    </aside>
+                </div>
+            </div>
+
+            <?php if (!empty($gallery)): ?>
+                <?php
+                $featuredPhoto = $gallery[0];
+                $galleryRemainder = array_slice($gallery, 1);
+                ?>
+                <section class="pt-5">
+                    <div class="d-flex align-items-end justify-content-between gap-3 flex-wrap mb-3">
+                        <div>
+                            <h2 class="section-title h3 mb-2">Photo Gallery</h2>
+                            <p class="gallery-summary mb-0"><?php echo h($galleryDescription); ?></p>
+                        </div>
+                        <span class="gallery-count"><i class="bx bx-images"></i><?php echo h($galleryCount . ' image' . ($galleryCount === 1 ? '' : 's')); ?></span>
+                    </div>
+
+                    <button class="gallery-featured" type="button" data-bs-toggle="modal" data-bs-target="#galleryModal" data-gallery-index="0">
+                        <div class="gallery-image-wrap">
+                            <span class="gallery-label"><?php echo h($featuredPhoto['label']); ?></span>
+                            <img src="<?php echo h($featuredPhoto['src']); ?>" alt="<?php echo h($featuredPhoto['alt']); ?>" loading="eager" decoding="async">
+                        </div>
+                        <div class="gallery-body">
+                            <h3 class="gallery-title mb-2">Featured View</h3>
+                            <p class="gallery-caption"><?php echo h($featuredPhoto['caption']); ?></p>
+                        </div>
+                    </button>
+
+                    <?php if (!empty($galleryRemainder)): ?>
+                        <div class="row g-4 pt-4">
+                            <?php foreach ($galleryRemainder as $index => $photo): ?>
+                                <div class="col-sm-6 col-xl-4">
+                                    <button class="gallery-card h-100" type="button" data-bs-toggle="modal" data-bs-target="#galleryModal" data-gallery-index="<?php echo h((string) ($index + 1)); ?>">
+                                        <div class="gallery-image-wrap">
+                                            <span class="gallery-label"><?php echo h($photo['label']); ?></span>
+                                            <img src="<?php echo h($photo['src']); ?>" alt="<?php echo h($photo['alt']); ?>" loading="lazy" decoding="async">
+                                        </div>
+                                        <div class="gallery-body">
+                                            <h3 class="gallery-title mb-2"><?php echo h($photo['label']); ?></h3>
+                                            <p class="gallery-caption"><?php echo h($photo['caption']); ?></p>
+                                        </div>
+                                    </button>
+                                </div>
+                            <?php endforeach; ?>
+                        </div>
+                    <?php endif; ?>
+                </section>
+            <?php endif; ?>
+
+            <?php if (!empty($related)): ?>
+                <section class="pt-5">
+                    <div class="d-flex align-items-end justify-content-between gap-3 flex-wrap mb-3">
+                        <div>
+                            <h2 class="section-title h3 mb-1">Related Establishments</h2>
+                            <p class="text-muted mb-0">Other listings in the same category.</p>
+                        </div>
+                        <a href="index.php#establishments" class="btn btn-outline-primary btn-pill">View All</a>
+                    </div>
+                    <div class="row g-4">
+                        <?php foreach ($related as $relatedItem): ?>
+                            <div class="col-md-6 col-xl-4">
+                                <a class="related-card" href="establishment.php?slug=<?php echo h(rawurlencode($relatedItem['slug'])); ?>">
+                                    <img src="<?php echo h($relatedItem['image']); ?>" alt="<?php echo h($relatedItem['image_alt']); ?>" loading="lazy" decoding="async">
+                                    <div class="related-body">
+                                        <h3 class="mb-2"><?php echo h($relatedItem['name']); ?></h3>
+                                        <p class="small mb-0"><?php echo h($relatedItem['phone']); ?></p>
+                                    </div>
+                                </a>
+                            </div>
+                        <?php endforeach; ?>
+                    </div>
+                </section>
+            <?php endif; ?>
+        </main>
+
+        <?php if (!empty($gallery)): ?>
+            <div class="modal fade" id="galleryModal" tabindex="-1" aria-labelledby="galleryModalTitle" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable gallery-modal-dialog">
+                    <div class="modal-content gallery-modal-content">
+                        <div class="modal-body p-3 p-md-4">
+                            <div class="d-flex justify-content-between align-items-start gap-3 mb-3">
+                                <div>
+                                    <p id="galleryModalLabel" class="text-uppercase text-muted small fw-bold mb-1"><?php echo h($gallery[0]['label']); ?></p>
+                                    <h2 id="galleryModalTitle" class="section-title h3 mb-0"><?php echo h($establishment['name']); ?></h2>
+                                </div>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <img id="galleryModalImage" class="gallery-modal-image mb-3" src="<?php echo h($gallery[0]['src']); ?>" alt="<?php echo h($gallery[0]['alt']); ?>">
+                            <div class="d-flex justify-content-between align-items-center gap-3 flex-wrap mb-3">
+                                <p id="galleryModalCaption" class="gallery-modal-caption mb-0"><?php echo h($gallery[0]['caption']); ?></p>
+                                <a id="galleryModalLink" class="btn btn-outline-primary btn-pill" href="<?php echo h($gallery[0]['src']); ?>" target="_blank" rel="noopener noreferrer">
+                                    <i class="bx bx-link-external me-1"></i>Open Image
+                                </a>
+                            </div>
+                            <div id="galleryModalThumbs" class="gallery-thumb-strip"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        <?php endif; ?>
+    <?php else: ?>
+        <main class="container py-5">
+            <div class="not-found-panel text-center mx-auto" style="max-width:46rem;">
+                <span class="detail-kicker text-dark bg-light mb-3"><i class="bx bx-search"></i>Not Found</span>
+                <h1 class="section-title display-5 mb-3">Establishment not found</h1>
+                <p class="detail-copy mb-4">The establishment page may have moved, or the link may be incomplete. Return to the list and choose an available tourism establishment.</p>
+                <a class="btn btn-primary btn-pill" href="index.php#establishments">Back to Establishments</a>
+            </div>
+        </main>
+    <?php endif; ?>
+
+    <footer class="container">
+        <div class="footer-shell d-flex align-items-center justify-content-between gap-3 flex-wrap">
+            <span>Lake Sebu Tourism Establishments</span>
+            <a href="index.php#establishments">Back to contact list</a>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <?php if (!empty($gallery)): ?>
+        <script>
+            const establishmentGallery = <?php echo $galleryData; ?>;
+            const galleryModal = document.getElementById('galleryModal');
+
+            if (galleryModal && Array.isArray(establishmentGallery) && establishmentGallery.length) {
+                const modalImage = document.getElementById('galleryModalImage');
+                const modalLabel = document.getElementById('galleryModalLabel');
+                const modalCaption = document.getElementById('galleryModalCaption');
+                const modalThumbs = document.getElementById('galleryModalThumbs');
+                const modalLink = document.getElementById('galleryModalLink');
+
+                function renderGalleryModal(index) {
+                    const safeIndex = index >= 0 && index < establishmentGallery.length ? index : 0;
+                    const item = establishmentGallery[safeIndex];
+
+                    if (!item) {
+                        return;
+                    }
+
+                    modalImage.src = item.src;
+                    modalImage.alt = item.alt || '';
+                    modalLabel.textContent = item.label || '';
+                    modalCaption.textContent = item.caption || '';
+                    modalLink.href = item.src;
+                    modalThumbs.innerHTML = '';
+
+                    establishmentGallery.forEach((thumbItem, thumbIndex) => {
+                        const thumbButton = document.createElement('button');
+                        const thumbImage = document.createElement('img');
+
+                        thumbButton.type = 'button';
+                        thumbButton.className = 'gallery-thumb' + (thumbIndex === safeIndex ? ' is-active' : '');
+                        thumbButton.setAttribute('aria-label', thumbItem.label || ('Photo ' + (thumbIndex + 1)));
+
+                        thumbImage.src = thumbItem.src;
+                        thumbImage.alt = thumbItem.alt || '';
+                        thumbImage.loading = 'lazy';
+                        thumbImage.decoding = 'async';
+
+                        thumbButton.appendChild(thumbImage);
+                        thumbButton.addEventListener('click', () => renderGalleryModal(thumbIndex));
+                        modalThumbs.appendChild(thumbButton);
+                    });
+                }
+
+                galleryModal.addEventListener('show.bs.modal', event => {
+                    const trigger = event.relatedTarget;
+                    const index = trigger ? Number(trigger.getAttribute('data-gallery-index') || '0') : 0;
+                    renderGalleryModal(Number.isNaN(index) ? 0 : index);
+                });
+
+                renderGalleryModal(0);
+            }
+        </script>
+    <?php endif; ?>
+</body>
+</html>
