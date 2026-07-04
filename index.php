@@ -1,3 +1,18 @@
+<?php
+$tourismEstablishments = require __DIR__ . '/data/establishments.php';
+$establishmentCategoryLabels = array(
+    'all' => 'All types',
+    'resort' => 'Resorts',
+    'lodging' => 'Lodging',
+    'adventure' => 'Adventure',
+    'garden' => 'Farms and gardens'
+);
+
+function h($value)
+{
+    return htmlspecialchars((string) $value, ENT_QUOTES, 'UTF-8');
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -897,6 +912,143 @@
             border-radius:999px;
             font-weight:800;
         }
+        .establishment-toolbar{
+            display:flex;
+            align-items:center;
+            justify-content:space-between;
+            gap:1rem;
+            margin-bottom:1.5rem;
+        }
+        .establishment-count{
+            color:#556b67;
+            line-height:1.5;
+        }
+        .establishment-count strong{
+            display:block;
+            color:#173434;
+            font-weight:800;
+        }
+        .establishment-controls{
+            display:flex;
+            gap:.75rem;
+            flex-wrap:wrap;
+            justify-content:flex-end;
+        }
+        .establishment-controls .form-control,
+        .establishment-controls .form-select{
+            min-height:3rem;
+            border-radius:999px;
+            border:1px solid rgba(15,61,62,.12);
+            box-shadow:0 12px 26px rgba(11,38,45,.05);
+            font-weight:700;
+        }
+        .establishment-controls .form-control{
+            min-width:min(20rem, 100%);
+        }
+        .establishment-card{
+            position:relative;
+            display:flex;
+            flex-direction:column;
+            height:100%;
+            overflow:hidden;
+            border-radius:1.55rem;
+            background:#fff;
+            color:inherit;
+            text-decoration:none;
+            border:1px solid rgba(15,61,62,.08);
+            box-shadow:0 20px 40px rgba(11,38,45,.10);
+            transition:transform .22s ease, box-shadow .22s ease, border-color .22s ease;
+        }
+        .establishment-card:hover,
+        .establishment-card:focus-visible{
+            color:inherit;
+            transform:translateY(-5px);
+            border-color:rgba(47,109,87,.24);
+            box-shadow:0 26px 52px rgba(11,38,45,.15);
+        }
+        .establishment-card:focus-visible{
+            outline:3px solid rgba(216,177,108,.65);
+            outline-offset:3px;
+        }
+        .establishment-media{
+            position:relative;
+            aspect-ratio:4 / 3;
+            overflow:hidden;
+            background:#eaf2ee;
+        }
+        .establishment-media img{
+            width:100%;
+            height:100%;
+            object-fit:cover;
+            display:block;
+            transition:transform .35s ease;
+        }
+        .establishment-card:hover .establishment-media img{
+            transform:scale(1.05);
+        }
+        .establishment-type{
+            position:absolute;
+            left:1rem;
+            bottom:1rem;
+            display:inline-flex;
+            align-items:center;
+            gap:.35rem;
+            padding:.52rem .82rem;
+            border-radius:999px;
+            background:rgba(255,255,255,.92);
+            color:#183c3a;
+            font-size:.8rem;
+            font-weight:800;
+            box-shadow:0 12px 24px rgba(11,38,45,.14);
+        }
+        .establishment-body{
+            display:flex;
+            flex-direction:column;
+            flex:1;
+            padding:1.2rem;
+        }
+        .establishment-title{
+            color:#173434;
+            font-weight:800;
+            line-height:1.25;
+        }
+        .establishment-summary{
+            color:#62736f;
+            line-height:1.65;
+        }
+        .establishment-contact{
+            display:flex;
+            align-items:center;
+            gap:.55rem;
+            color:#315552;
+            font-weight:800;
+            margin-top:auto;
+        }
+        .establishment-contact i{
+            color:var(--brand-moss);
+            font-size:1.15rem;
+        }
+        .establishment-cta{
+            display:inline-flex;
+            align-items:center;
+            justify-content:center;
+            gap:.45rem;
+            width:max-content;
+            margin-top:1rem;
+            border-radius:999px;
+            padding:.65rem .95rem;
+            background:rgba(15,61,62,.08);
+            color:var(--brand-deep);
+            font-size:.9rem;
+            font-weight:800;
+        }
+        .establishment-empty{
+            border-radius:1.2rem;
+            background:rgba(15,61,62,.06);
+            color:#526966;
+            padding:1rem 1.1rem;
+            font-weight:700;
+        }
         .itinerary-accordion .accordion-item,
         .faq-accordion .accordion-item{
             border:1px solid rgba(15,61,62,.08);
@@ -1042,6 +1194,13 @@
             .section-note{
                 max-width:none;
             }
+            .establishment-toolbar{
+                align-items:stretch;
+                flex-direction:column;
+            }
+            .establishment-controls{
+                justify-content:flex-start;
+            }
         }
         @media (max-width: 767.98px) {
             .section-shell,
@@ -1058,6 +1217,11 @@
             }
             .stay-card .card-img-top{
                 height:13rem;
+            }
+            .establishment-controls,
+            .establishment-controls .form-control,
+            .establishment-controls .form-select{
+                width:100%;
             }
         }
         .card-img-top{ height:200px; object-fit:cover; }
@@ -1325,6 +1489,7 @@
                 <a class="nav-link" href="#highlights">Highlights</a>
                 <a class="nav-link" href="#experiences">Experiences</a>
                 <a class="nav-link" href="#culture">Culture</a>
+                <a class="nav-link" href="#establishments">Establishments</a>
                 <a class="nav-link" href="#map">Map</a>
                 <a class="nav-link" href="#faq">FAQ</a>
             </div>
@@ -1352,6 +1517,7 @@
                 <li class="nav-item"><a class="nav-link" href="#highlights"><i class='bx  bx-directions text-primary'  ></i> Highlights</a></li>
                 <li class="nav-item"><a class="nav-link" href="#experiences"><i class='bx  bx-cycling text-primary'></i> Experiences</a></li>
                 <li class="nav-item"><a class="nav-link" href="#culture"><i class='bx bxs-castle'></i> Culture</a></li>
+                <li class="nav-item"><a class="nav-link" href="#establishments"><i class='bx bx-building-house'></i> Establishments</a></li>
                 <li class="nav-item"><a class="nav-link" href="#map"><i class='bx bx-map' ></i> Map</a></li>
                 <li class="nav-item"><a class="nav-link" href="#plan"><i class='bx bxs-plane-alt' ></i> Planner</a></li>
                 <li class="nav-item"><a class="nav-link" href="#faq"><i class='bx bx-question-mark' ></i> FAQ</a></li>
@@ -1868,6 +2034,62 @@
                 </table>
             </div>
             <p class="small text-muted mt-3 mb-0">Rates may shift by season, operator, group size, and bundled inclusions. Confirm the latest fee before you depart or pre-book.</p>
+        </div>
+    </section>
+
+    <section id="establishments" class="container py-5">
+        <div class="section-shell">
+            <div class="section-header">
+                <div class="section-copy">
+                    <h2 class="section-title display-6 mb-2">Tourism Establishments and Contact Details</h2>
+                    <p class="section-sub mb-0">Browse Lake Sebu resorts, lodging options, gardens, and adventure operators from the local contact list.</p>
+                </div>
+                <p class="section-note">Open any card to view the establishment page, contact number, quick notes, and map search link.</p>
+            </div>
+
+            <div class="establishment-toolbar">
+                <div class="establishment-count">
+                    <strong id="establishmentResultsValue"><?php echo count($tourismEstablishments); ?> establishments showing</strong>
+                    <span>Filter by type or search by name.</span>
+                </div>
+                <div class="establishment-controls">
+                    <label class="visually-hidden" for="establishmentCategory">Filter establishments</label>
+                    <select id="establishmentCategory" class="form-select" aria-label="Filter establishments by type">
+                        <?php foreach ($establishmentCategoryLabels as $categoryKey => $categoryLabel): ?>
+                            <option value="<?php echo h($categoryKey); ?>"><?php echo h($categoryLabel); ?></option>
+                        <?php endforeach; ?>
+                    </select>
+                    <label class="visually-hidden" for="establishmentSearch">Search establishments</label>
+                    <input id="establishmentSearch" class="form-control" type="search" placeholder="Search establishment" aria-label="Search establishment">
+                </div>
+            </div>
+
+            <div id="establishmentGrid" class="row g-4">
+                <?php foreach ($tourismEstablishments as $establishment): ?>
+                    <?php
+                    $establishmentSearchText = strtolower($establishment['name'] . ' ' . $establishment['type'] . ' ' . $establishment['summary']);
+                    $establishmentUrl = 'establishment.php?slug=' . rawurlencode($establishment['slug']);
+                    ?>
+                    <div class="col-md-6 col-xl-4 establishment-item"
+                         data-category="<?php echo h($establishment['category']); ?>"
+                         data-search="<?php echo h($establishmentSearchText); ?>">
+                        <a class="establishment-card" href="<?php echo h($establishmentUrl); ?>" aria-label="View details for <?php echo h($establishment['name']); ?>">
+                            <div class="establishment-media">
+                                <img src="<?php echo h($establishment['image']); ?>" alt="<?php echo h($establishment['image_alt']); ?>" loading="lazy" decoding="async">
+                                <span class="establishment-type"><i class="bx bx-map-pin"></i><?php echo h($establishment['type']); ?></span>
+                            </div>
+                            <div class="establishment-body">
+                                <h3 class="h5 establishment-title mb-2"><?php echo h($establishment['name']); ?></h3>
+                                <p class="small establishment-summary mb-3"><?php echo h($establishment['summary']); ?></p>
+                                <span class="establishment-contact"><i class="bx bx-phone"></i><?php echo h($establishment['phone']); ?></span>
+                                <span class="establishment-cta">View Details <i class="bx bx-right-arrow-alt"></i></span>
+                            </div>
+                        </a>
+                    </div>
+                <?php endforeach; ?>
+            </div>
+
+            <p id="establishmentEmpty" class="establishment-empty mt-4 mb-0" style="display:none;">No establishments match the current search.</p>
         </div>
     </section>
 
@@ -2508,6 +2730,33 @@ $(function() {
             $(this).toggle(selectedCat === 'all' || category === selectedCat);
         });
     });
+
+    function updateEstablishmentResults() {
+        const selectedCategory = $('#establishmentCategory').val() || 'all';
+        const query = ($('#establishmentSearch').val() || '').toString().trim().toLowerCase();
+        let visibleCount = 0;
+
+        $('#establishmentGrid .establishment-item').each(function() {
+            const category = ($(this).data('category') || '').toString();
+            const searchText = ($(this).data('search') || '').toString();
+            const categoryMatch = selectedCategory === 'all' || category === selectedCategory;
+            const queryMatch = !query || searchText.includes(query);
+            const isVisible = categoryMatch && queryMatch;
+
+            $(this).toggle(isVisible);
+            if (isVisible) visibleCount += 1;
+        });
+
+        const summary = visibleCount === 1
+            ? '1 establishment showing'
+            : `${visibleCount} establishments showing`;
+
+        $('#establishmentResultsValue').text(summary);
+        $('#establishmentEmpty').toggle(visibleCount === 0);
+    }
+
+    $('#establishmentCategory, #establishmentSearch').on('change input', updateEstablishmentResults);
+    updateEstablishmentResults();
 
     $('.add-to-planner').on('click', function() {
         const itinerarySize = $(this).data('size');
