@@ -1,0 +1,14 @@
+{
+  "name": "lake-sebu-tourism",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "node scripts/verify-static.mjs",
+    "dev": "node scripts/local-static-server.mjs",
+    "start": "node scripts/local-static-server.mjs"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}
