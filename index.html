@@ -1,18 +1,3 @@
-<?php
-$tourismEstablishments = require __DIR__ . '/data/establishments.php';
-$establishmentCategoryLabels = array(
-    'all' => 'All types',
-    'resort' => 'Resorts',
-    'lodging' => 'Lodging',
-    'adventure' => 'Adventure',
-    'garden' => 'Farms and gardens'
-);
-
-function h($value)
-{
-    return htmlspecialchars((string) $value, ENT_QUOTES, 'UTF-8');
-}
-?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -2049,45 +2034,377 @@ function h($value)
 
             <div class="establishment-toolbar">
                 <div class="establishment-count">
-                    <strong id="establishmentResultsValue"><?php echo count($tourismEstablishments); ?> establishments showing</strong>
+                    <strong id="establishmentResultsValue">22 establishments showing</strong>
                     <span>Filter by type or search by name.</span>
                 </div>
                 <div class="establishment-controls">
                     <label class="visually-hidden" for="establishmentCategory">Filter establishments</label>
                     <select id="establishmentCategory" class="form-select" aria-label="Filter establishments by type">
-                        <?php foreach ($establishmentCategoryLabels as $categoryKey => $categoryLabel): ?>
-                            <option value="<?php echo h($categoryKey); ?>"><?php echo h($categoryLabel); ?></option>
-                        <?php endforeach; ?>
-                    </select>
+                                                    <option value="all">All types</option>
+                                                    <option value="resort">Resorts</option>
+                                                    <option value="lodging">Lodging</option>
+                                                    <option value="adventure">Adventure</option>
+                                                    <option value="garden">Farms and gardens</option>
+                                            </select>
                     <label class="visually-hidden" for="establishmentSearch">Search establishments</label>
                     <input id="establishmentSearch" class="form-control" type="search" placeholder="Search establishment" aria-label="Search establishment">
                 </div>
             </div>
 
             <div id="establishmentGrid" class="row g-4">
-                <?php foreach ($tourismEstablishments as $establishment): ?>
-                    <?php
-                    $establishmentSearchText = strtolower($establishment['name'] . ' ' . $establishment['type'] . ' ' . $establishment['summary']);
-                    $establishmentUrl = 'establishment.php?slug=' . rawurlencode($establishment['slug']);
-                    ?>
-                    <div class="col-md-6 col-xl-4 establishment-item"
-                         data-category="<?php echo h($establishment['category']); ?>"
-                         data-search="<?php echo h($establishmentSearchText); ?>">
-                        <a class="establishment-card" href="<?php echo h($establishmentUrl); ?>" aria-label="View details for <?php echo h($establishment['name']); ?>">
+                                                        <div class="col-md-6 col-xl-4 establishment-item"
+                         data-category="resort"
+                         data-search="camp lake view resort lakeside resort a lake-view stay option for travelers who want easy access to quiet mornings and scenic water views.">
+                        <a class="establishment-card" href="establishment/camp-lake-view-resort/" aria-label="View details for Camp Lake View Resort">
                             <div class="establishment-media">
-                                <img src="<?php echo h($establishment['image']); ?>" alt="<?php echo h($establishment['image_alt']); ?>" loading="lazy" decoding="async">
-                                <span class="establishment-type"><i class="bx bx-map-pin"></i><?php echo h($establishment['type']); ?></span>
+                                <img src="assets/camp%20lake%20view/488216340_1103554471794809_7119492583158067753_n.jpg" alt="Featured gallery photo of Camp Lake View Resort in Lake Sebu" loading="lazy" decoding="async">
+                                <span class="establishment-type"><i class="bx bx-map-pin"></i>Lakeside resort</span>
                             </div>
                             <div class="establishment-body">
-                                <h3 class="h5 establishment-title mb-2"><?php echo h($establishment['name']); ?></h3>
-                                <p class="small establishment-summary mb-3"><?php echo h($establishment['summary']); ?></p>
-                                <span class="establishment-contact"><i class="bx bx-phone"></i><?php echo h($establishment['phone']); ?></span>
+                                <h3 class="h5 establishment-title mb-2">Camp Lake View Resort</h3>
+                                <p class="small establishment-summary mb-3">A lake-view stay option for travelers who want easy access to quiet mornings and scenic water views.</p>
+                                <span class="establishment-contact"><i class="bx bx-phone"></i>(+63) 948 375 7134</span>
                                 <span class="establishment-cta">View Details <i class="bx bx-right-arrow-alt"></i></span>
                             </div>
                         </a>
                     </div>
-                <?php endforeach; ?>
-            </div>
+                                                        <div class="col-md-6 col-xl-4 establishment-item"
+                         data-category="lodging"
+                         data-search="centro inn &amp; ultimate water tubing inn and adventure a practical inn option connected with water tubing for guests who want lodging and activity access.">
+                        <a class="establishment-card" href="establishment/centro-inn-ultimate-water-tubing/" aria-label="View details for Centro Inn &amp; Ultimate Water Tubing">
+                            <div class="establishment-media">
+                                <img src="assets/centro%20inn/487752035_1140228134787223_594299572013335008_n.jpg" alt="Featured gallery photo of Centro Inn &amp; Ultimate Water Tubing in Lake Sebu" loading="lazy" decoding="async">
+                                <span class="establishment-type"><i class="bx bx-map-pin"></i>Inn and adventure</span>
+                            </div>
+                            <div class="establishment-body">
+                                <h3 class="h5 establishment-title mb-2">Centro Inn &amp; Ultimate Water Tubing</h3>
+                                <p class="small establishment-summary mb-3">A practical inn option connected with water tubing for guests who want lodging and activity access.</p>
+                                <span class="establishment-contact"><i class="bx bx-phone"></i>(+63) 909 745 1167</span>
+                                <span class="establishment-cta">View Details <i class="bx bx-right-arrow-alt"></i></span>
+                            </div>
+                        </a>
+                    </div>
+                                                        <div class="col-md-6 col-xl-4 establishment-item"
+                         data-category="lodging"
+                         data-search="divine mercy retreat house retreat house a quieter stay option for visitors who prefer a reflective and simple lodging environment.">
+                        <a class="establishment-card" href="establishment/divine-mercy-retreat-house/" aria-label="View details for Divine Mercy Retreat House">
+                            <div class="establishment-media">
+                                <img src="assets/devine%20mercy/640123410_1365638002269130_3819450083371367496_n.jpg" alt="Featured gallery photo of Divine Mercy Retreat House in Lake Sebu" loading="lazy" decoding="async">
+                                <span class="establishment-type"><i class="bx bx-map-pin"></i>Retreat house</span>
+                            </div>
+                            <div class="establishment-body">
+                                <h3 class="h5 establishment-title mb-2">Divine Mercy Retreat House</h3>
+                                <p class="small establishment-summary mb-3">A quieter stay option for visitors who prefer a reflective and simple lodging environment.</p>
+                                <span class="establishment-contact"><i class="bx bx-phone"></i>(+63) 917 811 0181</span>
+                                <span class="establishment-cta">View Details <i class="bx bx-right-arrow-alt"></i></span>
+                            </div>
+                        </a>
+                    </div>
+                                                        <div class="col-md-6 col-xl-4 establishment-item"
+                         data-category="resort"
+                         data-search="dolores lake resort lake resort a resort option for travelers who want a scenic place to pause around the lake.">
+                        <a class="establishment-card" href="establishment/dolores-lake-resort/" aria-label="View details for Dolores Lake Resort">
+                            <div class="establishment-media">
+                                <img src="assets/dolores/652335470_1495203945949190_641546470549507798_n.jpg" alt="Featured gallery photo of Dolores Lake Resort in Lake Sebu" loading="lazy" decoding="async">
+                                <span class="establishment-type"><i class="bx bx-map-pin"></i>Lake resort</span>
+                            </div>
+                            <div class="establishment-body">
+                                <h3 class="h5 establishment-title mb-2">Dolores Lake Resort</h3>
+                                <p class="small establishment-summary mb-3">A resort option for travelers who want a scenic place to pause around the lake.</p>
+                                <span class="establishment-contact"><i class="bx bx-phone"></i>(+63) 950 118 7072</span>
+                                <span class="establishment-cta">View Details <i class="bx bx-right-arrow-alt"></i></span>
+                            </div>
+                        </a>
+                    </div>
+                                                        <div class="col-md-6 col-xl-4 establishment-item"
+                         data-category="resort"
+                         data-search="dreamweavers hill resort hill resort a hill resort option with a name that connects naturally with lake sebu culture and upland views.">
+                        <a class="establishment-card" href="establishment/dreamweavers-hill-resort/" aria-label="View details for Dreamweavers Hill Resort">
+                            <div class="establishment-media">
+                                <img src="assets/dreamweaver%20hill%20resort/0f66554b-30ae-4637-8b16-e285f4329957.jpg" alt="Featured gallery photo of Dreamweavers Hill Resort in Lake Sebu" loading="lazy" decoding="async">
+                                <span class="establishment-type"><i class="bx bx-map-pin"></i>Hill resort</span>
+                            </div>
+                            <div class="establishment-body">
+                                <h3 class="h5 establishment-title mb-2">Dreamweavers Hill Resort</h3>
+                                <p class="small establishment-summary mb-3">A hill resort option with a name that connects naturally with Lake Sebu culture and upland views.</p>
+                                <span class="establishment-contact"><i class="bx bx-phone"></i>(+63) 917 307 2767</span>
+                                <span class="establishment-cta">View Details <i class="bx bx-right-arrow-alt"></i></span>
+                            </div>
+                        </a>
+                    </div>
+                                                        <div class="col-md-6 col-xl-4 establishment-item"
+                         data-category="garden"
+                         data-search="emilio&#039;s flower garden garden attraction a garden stop for guests who want a gentler, photo-friendly break in their route.">
+                        <a class="establishment-card" href="establishment/emilios-flower-garden/" aria-label="View details for Emilio&#039;s Flower Garden">
+                            <div class="establishment-media">
+                                <img src="assets/emilios%20flower%20garden/476207356_953540483508436_5885387636642543267_n.jpg" alt="Featured gallery photo of Emilio&#039;s Flower Garden in Lake Sebu" loading="lazy" decoding="async">
+                                <span class="establishment-type"><i class="bx bx-map-pin"></i>Garden attraction</span>
+                            </div>
+                            <div class="establishment-body">
+                                <h3 class="h5 establishment-title mb-2">Emilio&#039;s Flower Garden</h3>
+                                <p class="small establishment-summary mb-3">A garden stop for guests who want a gentler, photo-friendly break in their route.</p>
+                                <span class="establishment-contact"><i class="bx bx-phone"></i>(+63) 915 900 5784</span>
+                                <span class="establishment-cta">View Details <i class="bx bx-right-arrow-alt"></i></span>
+                            </div>
+                        </a>
+                    </div>
+                                                        <div class="col-md-6 col-xl-4 establishment-item"
+                         data-category="lodging"
+                         data-search="evelandia lake vista lake-view lodging a lake-view option that fits sunrise plans and scenic overnight visits.">
+                        <a class="establishment-card" href="establishment/evelandia-lake-vista/" aria-label="View details for Evelandia Lake Vista">
+                            <div class="establishment-media">
+                                <img src="assets/evelandia%20lake%20vista/106392211_1519475601586162_3527589345449956970_n.jpg" alt="Featured gallery photo of Evelandia Lake Vista in Lake Sebu" loading="lazy" decoding="async">
+                                <span class="establishment-type"><i class="bx bx-map-pin"></i>Lake-view lodging</span>
+                            </div>
+                            <div class="establishment-body">
+                                <h3 class="h5 establishment-title mb-2">Evelandia Lake Vista</h3>
+                                <p class="small establishment-summary mb-3">A lake-view option that fits sunrise plans and scenic overnight visits.</p>
+                                <span class="establishment-contact"><i class="bx bx-phone"></i>(+63) 953 410 7708</span>
+                                <span class="establishment-cta">View Details <i class="bx bx-right-arrow-alt"></i></span>
+                            </div>
+                        </a>
+                    </div>
+                                                        <div class="col-md-6 col-xl-4 establishment-item"
+                         data-category="resort"
+                         data-search="garden by the lake resort garden resort a garden-and-lake resort setting for visitors who want scenery without rushing their day.">
+                        <a class="establishment-card" href="establishment/garden-by-the-lake-resort/" aria-label="View details for Garden by the Lake Resort">
+                            <div class="establishment-media">
+                                <img src="assets/garden%20by%20the%20lake%20resort/117842515_1737201496449105_7696957673462801645_n.jpg" alt="Featured gallery photo of Garden by the Lake Resort in Lake Sebu" loading="lazy" decoding="async">
+                                <span class="establishment-type"><i class="bx bx-map-pin"></i>Garden resort</span>
+                            </div>
+                            <div class="establishment-body">
+                                <h3 class="h5 establishment-title mb-2">Garden by the Lake Resort</h3>
+                                <p class="small establishment-summary mb-3">A garden-and-lake resort setting for visitors who want scenery without rushing their day.</p>
+                                <span class="establishment-contact"><i class="bx bx-phone"></i>(+63) 935 611 2913</span>
+                                <span class="establishment-cta">View Details <i class="bx bx-right-arrow-alt"></i></span>
+                            </div>
+                        </a>
+                    </div>
+                                                        <div class="col-md-6 col-xl-4 establishment-item"
+                         data-category="resort"
+                         data-search="merl garden spring resort garden spring resort a green resort option for travelers looking for a restful garden-style stop.">
+                        <a class="establishment-card" href="establishment/merl-garden-spring-resort/" aria-label="View details for Merl Garden Spring Resort">
+                            <div class="establishment-media">
+                                <img src="assets/merl%20garden/71963376_2746170705403673_5068413545058664448_n.jpg" alt="Featured gallery photo of Merl Garden Spring Resort in Lake Sebu" loading="lazy" decoding="async">
+                                <span class="establishment-type"><i class="bx bx-map-pin"></i>Garden spring resort</span>
+                            </div>
+                            <div class="establishment-body">
+                                <h3 class="h5 establishment-title mb-2">Merl Garden Spring Resort</h3>
+                                <p class="small establishment-summary mb-3">A green resort option for travelers looking for a restful garden-style stop.</p>
+                                <span class="establishment-contact"><i class="bx bx-phone"></i>(+63) 916 279 1277</span>
+                                <span class="establishment-cta">View Details <i class="bx bx-right-arrow-alt"></i></span>
+                            </div>
+                        </a>
+                    </div>
+                                                        <div class="col-md-6 col-xl-4 establishment-item"
+                         data-category="resort"
+                         data-search="myrna garden resort garden resort a resort option with a garden feel for easy-going lake sebu visits.">
+                        <a class="establishment-card" href="establishment/myrna-garden-resort/" aria-label="View details for Myrna Garden Resort">
+                            <div class="establishment-media">
+                                <img src="assets/myrna%20garden%20resort/421684411_424719880070333_513686706033460691_n.jpg" alt="Featured gallery photo of Myrna Garden Resort in Lake Sebu" loading="lazy" decoding="async">
+                                <span class="establishment-type"><i class="bx bx-map-pin"></i>Garden resort</span>
+                            </div>
+                            <div class="establishment-body">
+                                <h3 class="h5 establishment-title mb-2">Myrna Garden Resort</h3>
+                                <p class="small establishment-summary mb-3">A resort option with a garden feel for easy-going Lake Sebu visits.</p>
+                                <span class="establishment-contact"><i class="bx bx-phone"></i>(+63) 918 456 4489</span>
+                                <span class="establishment-cta">View Details <i class="bx bx-right-arrow-alt"></i></span>
+                            </div>
+                        </a>
+                    </div>
+                                                        <div class="col-md-6 col-xl-4 establishment-item"
+                         data-category="resort"
+                         data-search="highlander&#039;s lake resort highland lake resort a lake resort option with a highland feel for guests planning a scenic stay.">
+                        <a class="establishment-card" href="establishment/highlanders-lake-resort/" aria-label="View details for Highlander&#039;s Lake Resort">
+                            <div class="establishment-media">
+                                <img src="assets/highlander%27s%20lake%20sebu/552352070_122259466748232760_9166328572058473956_n.jpg" alt="Featured gallery photo of Highlander&#039;s Lake Resort in Lake Sebu" loading="lazy" decoding="async">
+                                <span class="establishment-type"><i class="bx bx-map-pin"></i>Highland lake resort</span>
+                            </div>
+                            <div class="establishment-body">
+                                <h3 class="h5 establishment-title mb-2">Highlander&#039;s Lake Resort</h3>
+                                <p class="small establishment-summary mb-3">A lake resort option with a highland feel for guests planning a scenic stay.</p>
+                                <span class="establishment-contact"><i class="bx bx-phone"></i>(+63) 998 498 9088</span>
+                                <span class="establishment-cta">View Details <i class="bx bx-right-arrow-alt"></i></span>
+                            </div>
+                        </a>
+                    </div>
+                                                        <div class="col-md-6 col-xl-4 establishment-item"
+                         data-category="resort"
+                         data-search="punta isla lake resort lake resort a known lake sebu resort choice for lake dining, stays, and classic water-view itineraries.">
+                        <a class="establishment-card" href="establishment/punta-isla-lake-resort/" aria-label="View details for Punta Isla Lake Resort">
+                            <div class="establishment-media">
+                                <img src="assets/punta%20isla/502686040_1133465732141539_6036160684617116115_n.jpg" alt="Featured gallery photo of Punta Isla Lake Resort in Lake Sebu" loading="lazy" decoding="async">
+                                <span class="establishment-type"><i class="bx bx-map-pin"></i>Lake resort</span>
+                            </div>
+                            <div class="establishment-body">
+                                <h3 class="h5 establishment-title mb-2">Punta Isla Lake Resort</h3>
+                                <p class="small establishment-summary mb-3">A known Lake Sebu resort choice for lake dining, stays, and classic water-view itineraries.</p>
+                                <span class="establishment-contact"><i class="bx bx-phone"></i>(+63) 907 199 9603</span>
+                                <span class="establishment-cta">View Details <i class="bx bx-right-arrow-alt"></i></span>
+                            </div>
+                        </a>
+                    </div>
+                                                        <div class="col-md-6 col-xl-4 establishment-item"
+                         data-category="resort"
+                         data-search="ramfels paradise resort resort a resort option for travelers who want a comfortable pause in a lake sebu route.">
+                        <a class="establishment-card" href="establishment/ramfels-paradise-resort/" aria-label="View details for Ramfels Paradise Resort">
+                            <div class="establishment-media">
+                                <img src="assets/ramfels%20paradise%20resort/484742309_1187179406751191_7111128610369414507_n.jpg" alt="Featured gallery photo of Ramfels Paradise Resort in Lake Sebu" loading="lazy" decoding="async">
+                                <span class="establishment-type"><i class="bx bx-map-pin"></i>Resort</span>
+                            </div>
+                            <div class="establishment-body">
+                                <h3 class="h5 establishment-title mb-2">Ramfels Paradise Resort</h3>
+                                <p class="small establishment-summary mb-3">A resort option for travelers who want a comfortable pause in a Lake Sebu route.</p>
+                                <span class="establishment-contact"><i class="bx bx-phone"></i>(+63) 985 582 2940</span>
+                                <span class="establishment-cta">View Details <i class="bx bx-right-arrow-alt"></i></span>
+                            </div>
+                        </a>
+                    </div>
+                                                        <div class="col-md-6 col-xl-4 establishment-item"
+                         data-category="resort"
+                         data-search="sa balai lake view resort lake-view resort a lake-view resort for guests who want scenery close to their stay.">
+                        <a class="establishment-card" href="establishment/sa-balai-lake-view-resort/" aria-label="View details for Sa Balai Lake View Resort">
+                            <div class="establishment-media">
+                                <img src="assets/sa%20balai%20lake%20view%20resort/625121974_1363711002450162_7377575256462224487_n.jpg" alt="Featured gallery photo of Sa Balai Lake View Resort in Lake Sebu" loading="lazy" decoding="async">
+                                <span class="establishment-type"><i class="bx bx-map-pin"></i>Lake-view resort</span>
+                            </div>
+                            <div class="establishment-body">
+                                <h3 class="h5 establishment-title mb-2">Sa Balai Lake View Resort</h3>
+                                <p class="small establishment-summary mb-3">A lake-view resort for guests who want scenery close to their stay.</p>
+                                <span class="establishment-contact"><i class="bx bx-phone"></i>(+63) 917 149 6795</span>
+                                <span class="establishment-cta">View Details <i class="bx bx-right-arrow-alt"></i></span>
+                            </div>
+                        </a>
+                    </div>
+                                                        <div class="col-md-6 col-xl-4 establishment-item"
+                         data-category="garden"
+                         data-search="sebul farm farm stop a farm-oriented stop for visitors who want a nature-based break in the itinerary.">
+                        <a class="establishment-card" href="establishment/sebul-farm/" aria-label="View details for Sebul Farm">
+                            <div class="establishment-media">
+                                <img src="assets/sebul%20farm/475767222_544992745230548_7127191843498171264_n.jpg" alt="Featured gallery photo of Sebul Farm in Lake Sebu" loading="lazy" decoding="async">
+                                <span class="establishment-type"><i class="bx bx-map-pin"></i>Farm stop</span>
+                            </div>
+                            <div class="establishment-body">
+                                <h3 class="h5 establishment-title mb-2">Sebul Farm</h3>
+                                <p class="small establishment-summary mb-3">A farm-oriented stop for visitors who want a nature-based break in the itinerary.</p>
+                                <span class="establishment-contact"><i class="bx bx-phone"></i>(+63) 917 923 0957</span>
+                                <span class="establishment-cta">View Details <i class="bx bx-right-arrow-alt"></i></span>
+                            </div>
+                        </a>
+                    </div>
+                                                        <div class="col-md-6 col-xl-4 establishment-item"
+                         data-category="adventure"
+                         data-search="seven falls &amp; zip line adventure adventure attraction an adventure stop for guests planning the famous seven falls and zipline experience.">
+                        <a class="establishment-card" href="establishment/seven-falls-zip-line-adventure/" aria-label="View details for Seven Falls &amp; Zip Line Adventure">
+                            <div class="establishment-media">
+                                <img src="assets/seven%20fall%20%26%20zip%20line%20adventure/471656996_960117346033804_8952270173252094888_n.jpg" alt="Featured gallery photo of Seven Falls &amp; Zip Line Adventure in Lake Sebu" loading="lazy" decoding="async">
+                                <span class="establishment-type"><i class="bx bx-map-pin"></i>Adventure attraction</span>
+                            </div>
+                            <div class="establishment-body">
+                                <h3 class="h5 establishment-title mb-2">Seven Falls &amp; Zip Line Adventure</h3>
+                                <p class="small establishment-summary mb-3">An adventure stop for guests planning the famous Seven Falls and zipline experience.</p>
+                                <span class="establishment-contact"><i class="bx bx-phone"></i>(+63) 930 560 3124</span>
+                                <span class="establishment-cta">View Details <i class="bx bx-right-arrow-alt"></i></span>
+                            </div>
+                        </a>
+                    </div>
+                                                        <div class="col-md-6 col-xl-4 establishment-item"
+                         data-category="adventure"
+                         data-search="sox paragliding adventure air adventure an adventure option for travelers interested in a higher-view outdoor experience.">
+                        <a class="establishment-card" href="establishment/sox-paragliding-adventure/" aria-label="View details for SOX Paragliding Adventure">
+                            <div class="establishment-media">
+                                <img src="assets/sox%20paragliding%20adventure/481257519_1032918915521735_515632257209221611_n.jpg" alt="Featured gallery photo of SOX Paragliding Adventure in Lake Sebu" loading="lazy" decoding="async">
+                                <span class="establishment-type"><i class="bx bx-map-pin"></i>Air adventure</span>
+                            </div>
+                            <div class="establishment-body">
+                                <h3 class="h5 establishment-title mb-2">SOX Paragliding Adventure</h3>
+                                <p class="small establishment-summary mb-3">An adventure option for travelers interested in a higher-view outdoor experience.</p>
+                                <span class="establishment-contact"><i class="bx bx-phone"></i>(+63) 945 470 4387</span>
+                                <span class="establishment-cta">View Details <i class="bx bx-right-arrow-alt"></i></span>
+                            </div>
+                        </a>
+                    </div>
+                                                        <div class="col-md-6 col-xl-4 establishment-item"
+                         data-category="lodging"
+                         data-search="summer lake wood lodging a lodging choice for visitors looking for a comfortable base around lake sebu.">
+                        <a class="establishment-card" href="establishment/summer-lake-wood/" aria-label="View details for Summer Lake Wood">
+                            <div class="establishment-media">
+                                <img src="assets/summer%20lake%20wood/480329472_647340544467363_7292770822553469145_n.jpg" alt="Featured gallery photo of Summer Lake Wood in Lake Sebu" loading="lazy" decoding="async">
+                                <span class="establishment-type"><i class="bx bx-map-pin"></i>Lodging</span>
+                            </div>
+                            <div class="establishment-body">
+                                <h3 class="h5 establishment-title mb-2">Summer Lake Wood</h3>
+                                <p class="small establishment-summary mb-3">A lodging choice for visitors looking for a comfortable base around Lake Sebu.</p>
+                                <span class="establishment-contact"><i class="bx bx-phone"></i>(+63) 943 129 9063</span>
+                                <span class="establishment-cta">View Details <i class="bx bx-right-arrow-alt"></i></span>
+                            </div>
+                        </a>
+                    </div>
+                                                        <div class="col-md-6 col-xl-4 establishment-item"
+                         data-category="resort"
+                         data-search="sunrise garden lake resort garden lake resort a resort option that naturally fits sunrise-focused lake sebu itineraries.">
+                        <a class="establishment-card" href="establishment/sunrise-garden-lake-resort/" aria-label="View details for Sunrise Garden Lake Resort">
+                            <div class="establishment-media">
+                                <img src="assets/sunrise%20garden%20lake%20resort/666908130_2844483582568511_8120596590432312170_n.jpg" alt="Featured gallery photo of Sunrise Garden Lake Resort in Lake Sebu" loading="lazy" decoding="async">
+                                <span class="establishment-type"><i class="bx bx-map-pin"></i>Garden lake resort</span>
+                            </div>
+                            <div class="establishment-body">
+                                <h3 class="h5 establishment-title mb-2">Sunrise Garden Lake Resort</h3>
+                                <p class="small establishment-summary mb-3">A resort option that naturally fits sunrise-focused Lake Sebu itineraries.</p>
+                                <span class="establishment-contact"><i class="bx bx-phone"></i>(+63) 907 212 8683</span>
+                                <span class="establishment-cta">View Details <i class="bx bx-right-arrow-alt"></i></span>
+                            </div>
+                        </a>
+                    </div>
+                                                        <div class="col-md-6 col-xl-4 establishment-item"
+                         data-category="lodging"
+                         data-search="tolento&#039;s pension house pension house a practical pension house option for visitors who need straightforward lodging.">
+                        <a class="establishment-card" href="establishment/tolentos-pension-house/" aria-label="View details for Tolento&#039;s Pension House">
+                            <div class="establishment-media">
+                                <img src="assets/tolentino%27s%20Pension%20house/482972796_1034048042106640_1577236500901134255_n.jpg" alt="Featured gallery photo of Tolento&#039;s Pension House in Lake Sebu" loading="lazy" decoding="async">
+                                <span class="establishment-type"><i class="bx bx-map-pin"></i>Pension house</span>
+                            </div>
+                            <div class="establishment-body">
+                                <h3 class="h5 establishment-title mb-2">Tolento&#039;s Pension House</h3>
+                                <p class="small establishment-summary mb-3">A practical pension house option for visitors who need straightforward lodging.</p>
+                                <span class="establishment-contact"><i class="bx bx-phone"></i>(+63) 906 717 1186</span>
+                                <span class="establishment-cta">View Details <i class="bx bx-right-arrow-alt"></i></span>
+                            </div>
+                        </a>
+                    </div>
+                                                        <div class="col-md-6 col-xl-4 establishment-item"
+                         data-category="lodging"
+                         data-search="lemobung resort (tourism lodge) tourism lodge a lodge option for guests who want a simple tourism stay around lake sebu.">
+                        <a class="establishment-card" href="establishment/lemobung-resort-tourism-lodge/" aria-label="View details for Lemobung Resort (Tourism Lodge)">
+                            <div class="establishment-media">
+                                <img src="assets/mp_img/ecolodge.jpg" alt="Featured gallery photo of Lemobung Resort (Tourism Lodge) in Lake Sebu" loading="lazy" decoding="async">
+                                <span class="establishment-type"><i class="bx bx-map-pin"></i>Tourism lodge</span>
+                            </div>
+                            <div class="establishment-body">
+                                <h3 class="h5 establishment-title mb-2">Lemobung Resort (Tourism Lodge)</h3>
+                                <p class="small establishment-summary mb-3">A lodge option for guests who want a simple tourism stay around Lake Sebu.</p>
+                                <span class="establishment-contact"><i class="bx bx-phone"></i>(+63) 936 263 8492</span>
+                                <span class="establishment-cta">View Details <i class="bx bx-right-arrow-alt"></i></span>
+                            </div>
+                        </a>
+                    </div>
+                                                        <div class="col-md-6 col-xl-4 establishment-item"
+                         data-category="adventure"
+                         data-search="t&#039;daan kini waterfalls waterfall attraction a waterfall stop for travelers building a scenic and active lake sebu route.">
+                        <a class="establishment-card" href="establishment/tdaan-kini-waterfalls/" aria-label="View details for T&#039;Daan Kini Waterfalls">
+                            <div class="establishment-media">
+                                <img src="assets/mp_img/zip1.jpg" alt="Featured gallery photo of T&#039;Daan Kini Waterfalls in Lake Sebu" loading="lazy" decoding="async">
+                                <span class="establishment-type"><i class="bx bx-map-pin"></i>Waterfall attraction</span>
+                            </div>
+                            <div class="establishment-body">
+                                <h3 class="h5 establishment-title mb-2">T&#039;Daan Kini Waterfalls</h3>
+                                <p class="small establishment-summary mb-3">A waterfall stop for travelers building a scenic and active Lake Sebu route.</p>
+                                <span class="establishment-contact"><i class="bx bx-phone"></i>(+63) 948 552 5835</span>
+                                <span class="establishment-cta">View Details <i class="bx bx-right-arrow-alt"></i></span>
+                            </div>
+                        </a>
+                    </div>
+                            </div>
 
             <p id="establishmentEmpty" class="establishment-empty mt-4 mb-0" style="display:none;">No establishments match the current search.</p>
         </div>
@@ -2924,7 +3241,7 @@ $(function() {
       setChatPending(true);
 
       try {
-        const response = await fetch('api/chat_proxy.php', {
+        const response = await fetch('api/chat', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
