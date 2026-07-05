@@ -496,7 +496,7 @@ if ($establishment) {
                 </div>
             </a>
             <a href="index.php#establishments" class="btn btn-outline-primary btn-pill ms-auto">
-                <i class="bx bx-left-arrow-alt me-1"></i>Back to List
+                <i class="bx bx-left-arrow-alt me-1"></i>Back to Establishments
             </a>
         </div>
     </nav>
@@ -513,7 +513,7 @@ if ($establishment) {
                             <i class="bx bx-phone me-1"></i>Call <?php echo h($establishment['phone']); ?>
                         </a>
                         <a class="btn btn-hero-secondary" href="<?php echo h($mapUrl); ?>" target="_blank" rel="noopener noreferrer">
-                            <i class="bx bx-map me-1"></i>Open Map Search
+                            <i class="bx bx-map me-1"></i>Open in Maps
                         </a>
                     </div>
                     <div class="hero-meta">
@@ -532,7 +532,7 @@ if ($establishment) {
             <div class="row g-4">
                 <div class="col-lg-7">
                     <article class="detail-panel h-100">
-                        <h2 class="section-title h3 mb-3">About This Establishment</h2>
+                        <h2 class="section-title h3 mb-3">About <?php echo h($establishment['name']); ?></h2>
                         <p class="detail-copy mb-0"><?php echo h($establishment['description']); ?></p>
                         <ul class="highlight-list">
                             <?php foreach ($establishment['highlights'] as $highlight): ?>
@@ -543,10 +543,10 @@ if ($establishment) {
                 </div>
                 <div class="col-lg-5">
                     <aside class="detail-side h-100">
-                        <h2 class="section-title h4 mb-3">Contact Details</h2>
+                        <h2 class="section-title h4 mb-3">Contact Information</h2>
                         <dl class="contact-list">
                             <div class="contact-item">
-                                <dt>Cell No.</dt>
+                                <dt>Phone</dt>
                                 <dd><a href="tel:<?php echo h($establishment['phone_tel']); ?>"><?php echo h($establishment['phone']); ?></a></dd>
                             </div>
                             <div class="contact-item">
@@ -554,16 +554,16 @@ if ($establishment) {
                                 <dd><?php echo h($establishment['ideal_for']); ?></dd>
                             </div>
                             <div class="contact-item">
-                                <dt>Listing Type</dt>
+                                <dt>Category</dt>
                                 <dd><?php echo h($establishment['type']); ?></dd>
                             </div>
                         </dl>
                         <div class="side-actions">
                             <a class="btn btn-primary btn-pill" href="tel:<?php echo h($establishment['phone_tel']); ?>">
-                                <i class="bx bx-phone-call me-1"></i>Call Establishment
+                                <i class="bx bx-phone-call me-1"></i>Call This Establishment
                             </a>
                             <a class="btn btn-outline-primary btn-pill" href="<?php echo h($mapUrl); ?>" target="_blank" rel="noopener noreferrer">
-                                <i class="bx bx-map-pin me-1"></i>Search in Maps
+                                <i class="bx bx-map-pin me-1"></i>View on Map
                             </a>
                         </div>
                     </aside>
@@ -620,10 +620,10 @@ if ($establishment) {
                 <section class="pt-5">
                     <div class="d-flex align-items-end justify-content-between gap-3 flex-wrap mb-3">
                         <div>
-                            <h2 class="section-title h3 mb-1">Related Establishments</h2>
-                            <p class="text-muted mb-0">Other listings in the same category.</p>
+                            <h2 class="section-title h3 mb-1">Similar Establishments</h2>
+                            <p class="text-muted mb-0">Explore other Lake Sebu listings in a similar category.</p>
                         </div>
-                        <a href="index.php#establishments" class="btn btn-outline-primary btn-pill">View All</a>
+                        <a href="index.php#establishments" class="btn btn-outline-primary btn-pill">View All Establishments</a>
                     </div>
                     <div class="row g-4">
                         <?php foreach ($related as $relatedItem): ?>
@@ -658,7 +658,7 @@ if ($establishment) {
                             <div class="d-flex justify-content-between align-items-center gap-3 flex-wrap mb-3">
                                 <p id="galleryModalCaption" class="gallery-modal-caption mb-0"><?php echo h($gallery[0]['caption']); ?></p>
                                 <a id="galleryModalLink" class="btn btn-outline-primary btn-pill" href="<?php echo h($gallery[0]['src']); ?>" target="_blank" rel="noopener noreferrer">
-                                    <i class="bx bx-link-external me-1"></i>Open Image
+                                    <i class="bx bx-link-external me-1"></i>Open Full Image
                                 </a>
                             </div>
                             <div id="galleryModalThumbs" class="gallery-thumb-strip"></div>
@@ -681,7 +681,7 @@ if ($establishment) {
     <footer class="container">
         <div class="footer-shell d-flex align-items-center justify-content-between gap-3 flex-wrap">
             <span>Lake Sebu Tourism Establishments</span>
-            <a href="index.php#establishments">Back to contact list</a>
+            <a href="index.php#establishments">Back to Establishments</a>
         </div>
     </footer>
 

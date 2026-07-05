@@ -124,6 +124,14 @@ function establishmentWithIndefiniteArticle($value)
     return $article . ' ' . $value;
 }
 
+function establishmentGalleryInterestPhrase($value)
+{
+    $phrase = establishmentLowercaseFirst($value);
+    $phrase = preg_replace('/^good for\s+/i', '', $phrase);
+
+    return trim((string) $phrase);
+}
+
 function getEstablishmentFolderImages($folderName, $assetsRoot)
 {
     $folderPath = $assetsRoot . DIRECTORY_SEPARATOR . $folderName;
@@ -234,7 +242,7 @@ function buildEstablishmentGalleryItems(array $establishment, array $imageUrls)
 
     foreach ($imageUrls as $index => $imageUrl) {
         $position = $index + 1;
-        $highlight = establishmentLowercaseFirst($highlights[$index % count($highlights)]);
+        $highlight = establishmentGalleryInterestPhrase($highlights[$index % count($highlights)]);
         $label = 'Photo ' . $position . ' of ' . $total;
 
         if ($position === 1) {
@@ -248,7 +256,7 @@ function buildEstablishmentGalleryItems(array $establishment, array $imageUrls)
             $caption = 'Gallery image ' . $position . ' from ' . $name . ', shared as another look at the establishment for ' . $idealFor . '.';
         } else {
             $alt = 'Gallery photo ' . $position . ' of ' . $name;
-            $caption = 'Additional gallery view from ' . $name . ', another look at its ' . $highlight . ' appeal.';
+            $caption = 'Additional gallery view from ' . $name . ', highlighting its ' . $highlight . '.';
         }
 
         $items[] = array(
@@ -367,7 +375,7 @@ $establishments = array(
         'summary' => 'A quieter stay option for visitors who prefer a reflective and simple lodging environment.',
         'description' => 'Divine Mercy Retreat House works best for guests seeking a calmer pace, simple accommodations, and a setting that supports rest between Lake Sebu activities.',
         'ideal_for' => 'Retreats, quiet stays, small groups',
-        'highlights' => array('Calm lodging environment', 'Simple guest base', 'Good for reflective trips'),
+        'highlights' => array('Calm lodging environment', 'Simple guest base', 'Reflective-trip setting'),
         'map_query' => 'Divine Mercy Retreat House Lake Sebu'
     ),
     array(
@@ -427,7 +435,7 @@ $establishments = array(
         'summary' => 'A lake-view option that fits sunrise plans and scenic overnight visits.',
         'description' => 'Evelandia Lake Vista is suited for guests who want a calmer Lake Sebu base, especially when early morning views and easy access to lake scenery are part of the plan.',
         'ideal_for' => 'Sunrise trips, couples, quiet lodging',
-        'highlights' => array('Lake vista setting', 'Good for sunrise plans', 'Calm lodging option'),
+        'highlights' => array('Lake vista setting', 'Sunrise-friendly base', 'Calm lodging option'),
         'map_query' => 'Evelandia Lake Vista Lake Sebu'
     ),
     array(
@@ -457,7 +465,7 @@ $establishments = array(
         'summary' => 'A green resort option for travelers looking for a restful garden-style stop.',
         'description' => 'Merl Garden Spring Resort can serve as a quiet pause or overnight base for guests who want a garden atmosphere close to Lake Sebu activities.',
         'ideal_for' => 'Nature breaks, family stays, quiet trips',
-        'highlights' => array('Garden resort character', 'Restful setting', 'Good for laid-back trips'),
+        'highlights' => array('Garden resort character', 'Restful setting', 'Laid-back trip base'),
         'map_query' => 'Merl Garden Spring Resort Lake Sebu'
     ),
     array(
@@ -502,7 +510,7 @@ $establishments = array(
         'summary' => 'A known Lake Sebu resort choice for lake dining, stays, and classic water-view itineraries.',
         'description' => 'Punta Isla Lake Resort is a strong fit for visitors who want the classic Lake Sebu resort experience, especially when a route includes lake dining, family time, and scenic views.',
         'ideal_for' => 'Lake dining, families, first-time visitors',
-        'highlights' => array('Classic lake stop', 'Dining-friendly setting', 'Good for group visits'),
+        'highlights' => array('Classic lake stop', 'Dining-friendly setting', 'Group-friendly visits'),
         'map_query' => 'Punta Isla Lake Resort Lake Sebu'
     ),
     array(
@@ -517,7 +525,7 @@ $establishments = array(
         'summary' => 'A resort option for travelers who want a comfortable pause in a Lake Sebu route.',
         'description' => 'Ramfels Paradise Resort can work as a simple leisure stop or overnight base for guests balancing sightseeing, meals, and rest.',
         'ideal_for' => 'Relaxed stays, families, groups',
-        'highlights' => array('Resort-style stop', 'Good for rest breaks', 'Group-friendly option'),
+        'highlights' => array('Resort-style stop', 'Restful break option', 'Group-friendly option'),
         'map_query' => 'Ramfels Paradise Resort Lake Sebu'
     ),
     array(
@@ -532,7 +540,7 @@ $establishments = array(
         'summary' => 'A lake-view resort for guests who want scenery close to their stay.',
         'description' => 'Sa Balai Lake View Resort is suitable for visitors who want the lake to be part of the stay itself, from quiet mornings to relaxed downtime between planned activities.',
         'ideal_for' => 'Lake views, couples, quiet stays',
-        'highlights' => array('Lake-view focus', 'Good for sunrise plans', 'Relaxed lodging option'),
+        'highlights' => array('Lake-view focus', 'Sunrise-friendly base', 'Relaxed lodging option'),
         'map_query' => 'Sa Balai Lake View Resort Lake Sebu'
     ),
     array(
@@ -547,7 +555,7 @@ $establishments = array(
         'summary' => 'A farm-oriented stop for visitors who want a nature-based break in the itinerary.',
         'description' => 'Sebul Farm gives travelers a lighter nature stop that can complement lake scenery, cultural visits, and family-friendly routes around Lake Sebu.',
         'ideal_for' => 'Nature stops, families, casual visits',
-        'highlights' => array('Farm setting', 'Nature-based stop', 'Good for slower itineraries'),
+        'highlights' => array('Farm setting', 'Nature-based stop', 'Slower-itinerary fit'),
         'map_query' => 'Sebul Farm Lake Sebu'
     ),
     array(
@@ -622,7 +630,7 @@ $establishments = array(
         'summary' => 'A practical pension house option for visitors who need straightforward lodging.',
         'description' => "Tolento's Pension House is suited for travelers looking for a simpler place to stay while keeping the focus on Lake Sebu's outdoor, cultural, and food stops.",
         'ideal_for' => 'Budget-conscious guests, practical stays, groups',
-        'highlights' => array('Pension house lodging', 'Practical guest base', 'Good for simple itineraries'),
+        'highlights' => array('Pension house lodging', 'Practical guest base', 'Simple-itinerary fit'),
         'map_query' => "Tolento's Pension House Lake Sebu"
     ),
     array(
@@ -637,7 +645,7 @@ $establishments = array(
         'summary' => 'A lodge option for guests who want a simple tourism stay around Lake Sebu.',
         'description' => 'Lemobung Resort works as a tourism lodge for visitors who need a practical place to settle while planning lake routes, food stops, and nearby experiences.',
         'ideal_for' => 'Lodge stays, families, route-based trips',
-        'highlights' => array('Tourism lodge option', 'Practical overnight base', 'Good for local routes'),
+        'highlights' => array('Tourism lodge option', 'Practical overnight base', 'Local-route base'),
         'map_query' => 'Lemobung Resort Tourism Lodge Lake Sebu'
     ),
     array(
