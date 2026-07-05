@@ -4,7 +4,8 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "build": "node scripts/verify-static.mjs",
+    "build": "node scripts/build-vercel.mjs && node scripts/verify-static.mjs dist",
+    "check": "node scripts/verify-static.mjs",
     "dev": "node scripts/local-static-server.mjs",
     "start": "node scripts/local-static-server.mjs"
   },

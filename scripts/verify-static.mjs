@@ -1,10 +1,9 @@
 import { access, readFile, readdir } from 'node:fs/promises';
 import path from 'node:path';
 
-const root = process.cwd();
+const root = path.resolve(process.cwd(), process.argv[2] || '.');
 const requiredFiles = [
   'index.html',
-  'api/chat.js',
   'assets/img/logo/logo.png',
   'establishment/camp-lake-view-resort/index.html'
 ];
@@ -32,4 +31,4 @@ if (slugs.length < 20) {
   throw new Error(`Expected establishment pages to be generated, found only ${slugs.length}.`);
 }
 
-console.log(`Static Vercel checks passed for ${slugs.length} establishment pages.`);
+console.log(`Static Vercel checks passed for ${slugs.length} establishment pages in ${path.relative(process.cwd(), root) || '.'}.`);

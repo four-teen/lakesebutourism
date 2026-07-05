@@ -5,7 +5,8 @@ import { fileURLToPath } from 'node:url';
 import chatHandler from '../api/chat.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const root = path.resolve(__dirname, '..');
+const projectRoot = path.resolve(__dirname, '..');
+const root = path.resolve(projectRoot, process.env.STATIC_ROOT || '.');
 const port = Number(process.env.PORT || 3000);
 const mimeTypes = new Map([
   ['.css', 'text/css; charset=utf-8'],
@@ -20,7 +21,7 @@ const mimeTypes = new Map([
 ]);
 
 function loadDotEnv() {
-  const envPath = path.join(root, '.env');
+  const envPath = path.join(projectRoot, '.env');
 
   if (!existsSync(envPath)) {
     return;
@@ -92,5 +93,5 @@ const server = createServer((req, res) => {
 });
 
 server.listen(port, () => {
-  console.log(`Lake Sebu static site running at http://localhost:${port}`);
+  console.log(`Lake Sebu static site running at http://localhost:${port} from ${path.relative(projectRoot, root) || '.'}`);
 });
