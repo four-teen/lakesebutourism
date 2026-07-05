@@ -255,7 +255,7 @@ export default async function handler(req, res) {
 
     const reply = extractReply(data);
     jsonResponse(res, 200, {
-      reply: reply || 'Sorry, no reply right now.'
+      reply: reply || 'Sorry, I could not prepare a reply right now.'
     });
   } catch (error) {
     const message = error?.name === 'AbortError'
@@ -263,7 +263,7 @@ export default async function handler(req, res) {
       : error?.message || 'Unable to reach Gemini.';
 
     jsonResponse(res, 502, {
-      reply: "The Lake Sebu Assistant is temporarily unavailable because it couldn't reach Gemini.",
+      reply: 'The Lake Sebu Assistant is temporarily unavailable. Please try again shortly.',
       detail: redactSecrets(message)
     });
   } finally {
